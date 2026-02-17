@@ -35,18 +35,20 @@ namespace mobile_api.Repositories
             return author;
         }
 
-        public async Task<bool> DeleteAuthor(int id){
+        public async Task<bool> DeleteAuthor(int id)
+        {
 
             var author = await _context.Authors.FindAsync(id);
-            if(author == null) return false;
+            if (author == null) return false;
             _context.Authors.Remove(author);
             await _context.SaveChangesAsync();
             return true;
         }
 
-        public async Task<Author?> UpdateAuthor(int id, CreateAuthorDto authorDto){
+        public async Task<Author?> UpdateAuthor(int id, CreateAuthorDto authorDto)
+        {
             var author = await _context.Authors.FindAsync(id);
-            if(author == null) return null;
+            if (author == null) return null;
             author.Name = authorDto.Name;
             await _context.SaveChangesAsync();
             return author;
@@ -54,7 +56,8 @@ namespace mobile_api.Repositories
 
         public async Task<User> Register(RegisterDto registerDto)
         {
-            var user = new User{
+            var user = new User
+            {
                 Email = registerDto.Email,
                 Password = registerDto.Password,
                 RoleId = 2,
@@ -65,7 +68,8 @@ namespace mobile_api.Repositories
             _context.Users.Add(user);
             await _context.SaveChangesAsync();
 
-            var UserProfile = new UserProfile{
+            var UserProfile = new UserProfile
+            {
                 Fname = registerDto.Fname,
                 Lname = registerDto.Lname,
                 Phone = registerDto.Phone,
@@ -76,7 +80,7 @@ namespace mobile_api.Repositories
             };
             _context.UserProfiles.Add(UserProfile);
             await _context.SaveChangesAsync();
-            
+
             return user;
         }
     }
