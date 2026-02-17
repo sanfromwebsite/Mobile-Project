@@ -25,7 +25,10 @@ namespace mobile_api.Data
         public DbSet<PaymentMethod> PaymentMethods { get; set; } = null!;
         public DbSet<PaymentStatus> PaymentStatuses { get; set; } = null!;
         public DbSet<BookDiscount> BookDiscounts { get; set; } = null!;
+        public DbSet<Category> Categories { get; set; } = null!;
+        public DbSet<BookCategory> BookCategories { get; set; } = null!;
         public DbSet<RevokedToken> RevokedTokens { get; set; } = null!;
+        public DbSet<Notification> Notifications { get; set; } = null!;
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -61,6 +64,13 @@ namespace mobile_api.Data
                 .HasOne(b => b.Author)
                 .WithMany(a => a.Books)
                 .HasForeignKey(b => b.AuthorId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            // Category -> Books (One-to-Many)
+            modelBuilder.Entity<Book>()
+                .HasOne(b => b.Category)
+                .WithMany()
+                .HasForeignKey(b => b.CategoryId)
                 .OnDelete(DeleteBehavior.Restrict);
 
             // Book -> BookDiscounts (One-to-Many)
@@ -152,6 +162,23 @@ namespace mobile_api.Data
                 .HasOne(r => r.Book)
                 .WithMany(b => b.Ratings)
                 .HasForeignKey(r => r.BookId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            // ============================================
+            // MANY-TO-MANY RELATIONSHIPS
+            // ============================================
+
+            // Book <-> Category (Many-to-Many through BookCategory)
+            modelBuilder.Entity<BookCategory>()
+                .HasOne(bc => bc.Book)
+                .WithMany(b => b.BookCategories)
+                .HasForeignKey(bc => bc.BookId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            modelBuilder.Entity<BookCategory>()
+                .HasOne(bc => bc.Category)
+                .WithMany(c => c.BookCategories)
+                .HasForeignKey(bc => bc.CategoryId)
                 .OnDelete(DeleteBehavior.Cascade);
 
             // ============================================

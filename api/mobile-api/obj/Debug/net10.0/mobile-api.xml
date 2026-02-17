@@ -1,0 +1,143 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>mobile-api</name>
+    </assembly>
+    <members>
+        <member name="M:mobile_api.Controllers.BookController.GetAllBooks(mobile_api.Helpers.BookQueryObject)">
+            <summary>
+            The code is case-insensitive, so price_desc, Price_Desc, and PRICE_DESC will all work perfectly!
+            </summary>
+            <remarks>
+            Use 'SortBy' to sort by fields (e.g., "Name", "Price"). 
+            Add "_desc" for descending order (e.g., "Price_desc"). 
+            Sorting is case-insensitive.
+            </remarks>
+        </member>
+        <member name="T:mobile_api.Migrations.InitialMigration">
+            <inheritdoc />
+        </member>
+        <member name="M:mobile_api.Migrations.InitialMigration.Up(Microsoft.EntityFrameworkCore.Migrations.MigrationBuilder)">
+            <inheritdoc />
+        </member>
+        <member name="M:mobile_api.Migrations.InitialMigration.Down(Microsoft.EntityFrameworkCore.Migrations.MigrationBuilder)">
+            <inheritdoc />
+        </member>
+        <member name="M:mobile_api.Migrations.InitialMigration.BuildTargetModel(Microsoft.EntityFrameworkCore.ModelBuilder)">
+            <inheritdoc />
+        </member>
+        <member name="T:mobile_api.Migrations.fisrtMigration">
+            <inheritdoc />
+        </member>
+        <member name="M:mobile_api.Migrations.fisrtMigration.Up(Microsoft.EntityFrameworkCore.Migrations.MigrationBuilder)">
+            <inheritdoc />
+        </member>
+        <member name="M:mobile_api.Migrations.fisrtMigration.Down(Microsoft.EntityFrameworkCore.Migrations.MigrationBuilder)">
+            <inheritdoc />
+        </member>
+        <member name="M:mobile_api.Migrations.fisrtMigration.BuildTargetModel(Microsoft.EntityFrameworkCore.ModelBuilder)">
+            <inheritdoc />
+        </member>
+        <member name="T:mobile_api.Migrations.AddUserProfileKey">
+            <inheritdoc />
+        </member>
+        <member name="M:mobile_api.Migrations.AddUserProfileKey.Up(Microsoft.EntityFrameworkCore.Migrations.MigrationBuilder)">
+            <inheritdoc />
+        </member>
+        <member name="M:mobile_api.Migrations.AddUserProfileKey.Down(Microsoft.EntityFrameworkCore.Migrations.MigrationBuilder)">
+            <inheritdoc />
+        </member>
+        <member name="M:mobile_api.Migrations.AddUserProfileKey.BuildTargetModel(Microsoft.EntityFrameworkCore.ModelBuilder)">
+            <inheritdoc />
+        </member>
+        <member name="T:mobile_api.Migrations.AddAllTable">
+            <inheritdoc />
+        </member>
+        <member name="M:mobile_api.Migrations.AddAllTable.Up(Microsoft.EntityFrameworkCore.Migrations.MigrationBuilder)">
+            <inheritdoc />
+        </member>
+        <member name="M:mobile_api.Migrations.AddAllTable.Down(Microsoft.EntityFrameworkCore.Migrations.MigrationBuilder)">
+            <inheritdoc />
+        </member>
+        <member name="M:mobile_api.Migrations.AddAllTable.BuildTargetModel(Microsoft.EntityFrameworkCore.ModelBuilder)">
+            <inheritdoc />
+        </member>
+        <member name="T:mobile_api.Migrations.FixSeedDataWithStaticDates">
+            <inheritdoc />
+        </member>
+        <member name="M:mobile_api.Migrations.FixSeedDataWithStaticDates.Up(Microsoft.EntityFrameworkCore.Migrations.MigrationBuilder)">
+            <inheritdoc />
+        </member>
+        <member name="M:mobile_api.Migrations.FixSeedDataWithStaticDates.Down(Microsoft.EntityFrameworkCore.Migrations.MigrationBuilder)">
+            <inheritdoc />
+        </member>
+        <member name="M:mobile_api.Migrations.FixSeedDataWithStaticDates.BuildTargetModel(Microsoft.EntityFrameworkCore.ModelBuilder)">
+            <inheritdoc />
+        </member>
+        <member name="T:mobile_api.Migrations.RemovePhoto">
+            <inheritdoc />
+        </member>
+        <member name="M:mobile_api.Migrations.RemovePhoto.Up(Microsoft.EntityFrameworkCore.Migrations.MigrationBuilder)">
+            <inheritdoc />
+        </member>
+        <member name="M:mobile_api.Migrations.RemovePhoto.Down(Microsoft.EntityFrameworkCore.Migrations.MigrationBuilder)">
+            <inheritdoc />
+        </member>
+        <member name="M:mobile_api.Migrations.RemovePhoto.BuildTargetModel(Microsoft.EntityFrameworkCore.ModelBuilder)">
+            <inheritdoc />
+        </member>
+        <member name="T:mobile_api.Migrations.AddRevokedTokens">
+            <inheritdoc />
+        </member>
+        <member name="M:mobile_api.Migrations.AddRevokedTokens.Up(Microsoft.EntityFrameworkCore.Migrations.MigrationBuilder)">
+            <inheritdoc />
+        </member>
+        <member name="M:mobile_api.Migrations.AddRevokedTokens.Down(Microsoft.EntityFrameworkCore.Migrations.MigrationBuilder)">
+            <inheritdoc />
+        </member>
+        <member name="M:mobile_api.Migrations.AddRevokedTokens.BuildTargetModel(Microsoft.EntityFrameworkCore.ModelBuilder)">
+            <inheritdoc />
+        </member>
+        <member name="T:mobile_api.Migrations.AddCategory">
+            <inheritdoc />
+        </member>
+        <member name="M:mobile_api.Migrations.AddCategory.Up(Microsoft.EntityFrameworkCore.Migrations.MigrationBuilder)">
+            <inheritdoc />
+        </member>
+        <member name="M:mobile_api.Migrations.AddCategory.Down(Microsoft.EntityFrameworkCore.Migrations.MigrationBuilder)">
+            <inheritdoc />
+        </member>
+        <member name="M:mobile_api.Migrations.AddCategory.BuildTargetModel(Microsoft.EntityFrameworkCore.ModelBuilder)">
+            <inheritdoc />
+        </member>
+        <member name="T:mobile_api.Migrations.AddCategoryIdToBookNullable">
+            <inheritdoc />
+        </member>
+        <member name="M:mobile_api.Migrations.AddCategoryIdToBookNullable.Up(Microsoft.EntityFrameworkCore.Migrations.MigrationBuilder)">
+            <inheritdoc />
+        </member>
+        <member name="M:mobile_api.Migrations.AddCategoryIdToBookNullable.Down(Microsoft.EntityFrameworkCore.Migrations.MigrationBuilder)">
+            <inheritdoc />
+        </member>
+        <member name="M:mobile_api.Migrations.AddCategoryIdToBookNullable.BuildTargetModel(Microsoft.EntityFrameworkCore.ModelBuilder)">
+            <inheritdoc />
+        </member>
+        <member name="T:mobile_api.Migrations.AddGlobalNotifications">
+            <inheritdoc />
+        </member>
+        <member name="M:mobile_api.Migrations.AddGlobalNotifications.Up(Microsoft.EntityFrameworkCore.Migrations.MigrationBuilder)">
+            <inheritdoc />
+        </member>
+        <member name="M:mobile_api.Migrations.AddGlobalNotifications.Down(Microsoft.EntityFrameworkCore.Migrations.MigrationBuilder)">
+            <inheritdoc />
+        </member>
+        <member name="M:mobile_api.Migrations.AddGlobalNotifications.BuildTargetModel(Microsoft.EntityFrameworkCore.ModelBuilder)">
+            <inheritdoc />
+        </member>
+        <member name="T:Program">
+            <summary>
+            Auto-generated public partial Program class for top-level statement apps.
+            </summary>
+        </member>
+    </members>
+</doc>
