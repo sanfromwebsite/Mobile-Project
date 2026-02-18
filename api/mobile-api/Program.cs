@@ -3,6 +3,7 @@ using mobile_api.Data;
 using mobile_api.Interfaces;
 using mobile_api.Repositories;
 using mobile_api.Services;
+using mobile_api.Models.Payway;
 
 using Microsoft.OpenApi.Models;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -12,7 +13,14 @@ using Microsoft.OpenApi;
 
 var builder = WebApplication.CreateBuilder(args);
 AppContext.SetSwitch("Npgsql.EnableLegacyTimestampBehavior", true);
-// builder.Services.AddOpenApi(); // Removed
+
+// Bind BakongSettings from appsettings.json
+builder.Services.Configure<BakongSettings>(
+    builder.Configuration.GetSection("BakongSettings"));
+
+// HttpClient + Service
+builder.Services.AddHttpClient<PaywayServices>();
+
 builder.Services.AddControllers()
     .AddJsonOptions(options =>
     {

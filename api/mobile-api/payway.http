@@ -1,0 +1,15 @@
+@mobile_api_HostAddress = http://localhost:5239
+
+### Generate KHQR
+POST {{mobile_api_HostAddress}}/api/Payway/generate
+Content-Type: application/json
+
+{
+  "amount": 1.00,
+  "billNumber": "BILL-001",
+  "mobileNumber": "85512345678"
+}
+
+### Check Payment Status by MD5
+GET {{mobile_api_HostAddress}}/api/Payway/check-by-md5/YOUR_MD5_HERE
+Accept: application/json
