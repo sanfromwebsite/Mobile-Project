@@ -366,3 +366,5 @@
 /Users/lounsan/Documents/year four/project-mb/api/mobile-api/bin/Debug/net10.0/mobile-api.staticwebassets.runtime.json
 /Users/lounsan/Documents/year four/project-mb/api/mobile-api/bin/Debug/net10.0/mobile-api.xml
 /Users/lounsan/Documents/year four/project-mb/api/mobile-api/obj/Debug/net10.0/mobile-api.xml
+/Users/lounsan/Documents/year four/project-mb/api/mobile-api/bin/Debug/net10.0/kh.gov.nbc.bakong_khqr.dll
+/Users/lounsan/Documents/year four/project-mb/api/mobile-api/bin/Debug/net10.0/Newtonsoft.Json.dll
