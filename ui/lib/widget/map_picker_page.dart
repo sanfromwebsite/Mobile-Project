@@ -15,15 +15,25 @@ class MapPickerPage extends StatefulWidget {
 
 class _MapPickerPageState extends State<MapPickerPage> {
   GoogleMapController? _mapController;
-  LatLng _selectedLocation = const LatLng(11.5564, 104.9282); // Default to Phnom Penh
+  final LatLng _defaultLocation = const LatLng(11.5564, 104.9282); // Phnom Penh
+  late LatLng _selectedLocation;
   String _address = "";
   bool _isLoading = false;
+
+  // Cambodia Bounds
+  final CameraTargetBounds _cambodiaBounds = CameraTargetBounds(
+    LatLngBounds(
+      southwest: const LatLng(9.9, 102.3),
+      northeast: const LatLng(14.7, 107.8),
+    ),
+  );
 
   @override
   void initState() {
     super.initState();
+    _selectedLocation = widget.initialLocation ?? _defaultLocation;
+    
     if (widget.initialLocation != null) {
-      _selectedLocation = widget.initialLocation!;
       _getAddressFromLatLng(_selectedLocation);
     } else {
       _determinePosition();
@@ -38,19 +48,25 @@ class _MapPickerPageState extends State<MapPickerPage> {
 
       serviceEnabled = await Geolocator.isLocationServiceEnabled();
       if (!serviceEnabled) {
-        throw 'Location services are disabled.';
+        // Just use default location if service disabled
+         _updateLocation(_defaultLocation);
+        return;
       }
 
       permission = await Geolocator.checkPermission();
       if (permission == LocationPermission.denied) {
         permission = await Geolocator.requestPermission();
         if (permission == LocationPermission.denied) {
-          throw 'Location permissions are denied.';
+           // Just use default location
+           _updateLocation(_defaultLocation);
+           return;
         }
       }
 
       if (permission == LocationPermission.deniedForever) {
-        throw 'Location permissions are permanently denied.';
+         // Just use default location
+         _updateLocation(_defaultLocation);
+         return;
       }
 
       Position position = await Geolocator.getCurrentPosition(
@@ -58,25 +74,37 @@ class _MapPickerPageState extends State<MapPickerPage> {
         timeLimit: const Duration(seconds: 10),
       );
       
-      setState(() {
-        _selectedLocation = LatLng(position.latitude, position.longitude);
-        _isLoading = false;
-      });
+      // Check if location is inside Cambodia
+      if (position.latitude < 9.9 || position.latitude > 14.7 || 
+          position.longitude < 102.3 || position.longitude > 107.8) {
+         if (mounted) {
+           ScaffoldMessenger.of(context).showSnackBar(
+             const SnackBar(content: Text("Location outside Cambodia. Defaulting to Phnom Penh."))
+           );
+         }
+         _updateLocation(_defaultLocation);
+      } else {
+        _updateLocation(LatLng(position.latitude, position.longitude));
+      }
       
-      _mapController?.animateCamera(
-        CameraUpdate.newLatLng(_selectedLocation),
-      );
-      _getAddressFromLatLng(_selectedLocation);
     } catch (e) {
       debugPrint("Error getting location: $e");
-      setState(() => _isLoading = false);
-      // Fallback: stay at default location (Phnom Penh)
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text("Error: ${e.toString()}"))
-        );
-      }
+       _updateLocation(_defaultLocation);
     }
+  }
+
+  void _updateLocation(LatLng location) {
+    if (!mounted) return;
+    
+    setState(() {
+      _selectedLocation = location;
+      _isLoading = false;
+    });
+    
+    _mapController?.animateCamera(
+      CameraUpdate.newLatLng(location),
+    );
+    _getAddressFromLatLng(location);
   }
 
   Future<void> _getAddressFromLatLng(LatLng position) async {
@@ -87,12 +115,14 @@ class _MapPickerPageState extends State<MapPickerPage> {
       );
       if (placemarks.isNotEmpty) {
         Placemark place = placemarks[0];
-        setState(() {
-          _address = "${place.street}, ${place.subLocality}, ${place.locality}, ${place.country}";
-        });
+        if (mounted) {
+          setState(() {
+            _address = "${place.street}, ${place.subLocality}, ${place.locality}, ${place.country}";
+          });
+        }
       }
     } catch (e) {
-      debugPrint(e.toString());
+      debugPrint("Geocoding error: $e");
     }
   }
 
@@ -122,6 +152,8 @@ class _MapPickerPageState extends State<MapPickerPage> {
               target: _selectedLocation,
               zoom: 15,
             ),
+            cameraTargetBounds: _cambodiaBounds, // Restrict to Cambodia
+            minMaxZoomPreference: const MinMaxZoomPreference(7, 20), // Restrict zoom out
             onTap: (position) {
               setState(() => _selectedLocation = position);
               _getAddressFromLatLng(position);
@@ -157,7 +189,7 @@ class _MapPickerPageState extends State<MapPickerPage> {
                 mainAxisSize: MainAxisSize.min,
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(
+                   Text(
                     LanguageService().translate('confirm_location'),
                     style: const TextStyle(
                       fontFamily: 'Hanuman',
@@ -194,7 +226,7 @@ class _MapPickerPageState extends State<MapPickerPage> {
                       child: _isLoading 
                         ? const SizedBox(height: 20, width: 20, child: CircularProgressIndicator(color: Colors.white, strokeWidth: 2))
                         : Text(
-                            LanguageService().translate('confirm_location'),
+                             LanguageService().translate('confirm_location'),
                             style: const TextStyle(
                               fontFamily: 'Hanuman',
                               fontWeight: FontWeight.bold,

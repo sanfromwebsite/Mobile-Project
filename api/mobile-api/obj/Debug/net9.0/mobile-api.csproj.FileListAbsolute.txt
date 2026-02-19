@@ -131,3 +131,7 @@ D:\flutter\project\mobile\Mobile-Project\api\mobile-api\bin\Debug\net9.0\ru\Micr
 D:\flutter\project\mobile\Mobile-Project\api\mobile-api\bin\Debug\net9.0\tr\Microsoft.CodeAnalysis.Workspaces.MSBuild.BuildHost.resources.dll
 D:\flutter\project\mobile\Mobile-Project\api\mobile-api\bin\Debug\net9.0\zh-Hans\Microsoft.CodeAnalysis.Workspaces.MSBuild.BuildHost.resources.dll
 D:\flutter\project\mobile\Mobile-Project\api\mobile-api\bin\Debug\net9.0\zh-Hant\Microsoft.CodeAnalysis.Workspaces.MSBuild.BuildHost.resources.dll
+D:\flutter\project\mobile\Mobile-Project\api\mobile-api\bin\Debug\net9.0\mobile-api.xml
+D:\flutter\project\mobile\Mobile-Project\api\mobile-api\bin\Debug\net9.0\kh.gov.nbc.bakong_khqr.dll
+D:\flutter\project\mobile\Mobile-Project\api\mobile-api\bin\Debug\net9.0\Newtonsoft.Json.dll
+D:\flutter\project\mobile\Mobile-Project\api\mobile-api\obj\Debug\net9.0\mobile-api.xml

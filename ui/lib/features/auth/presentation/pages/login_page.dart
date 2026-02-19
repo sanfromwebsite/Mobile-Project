@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
 import '../../../../core/constants/app_colors.dart';
-import '../../../home/presentation/pages/home_page.dart';
-import '../../data/auth_service.dart';
 import 'signup_page.dart';
 
 class LoginPage extends StatefulWidget {
@@ -12,16 +10,29 @@ class LoginPage extends StatefulWidget {
 }
 
 class _LoginPageState extends State<LoginPage> with SingleTickerProviderStateMixin {
+  bool _isExpanded = false; // State for popup form
+  bool _isLoading = false; // Loading state for API call
   bool _isObscured = true;
-  bool _isLoading = false;
-  bool _emailError = false;
-  bool _passwordError = false;
-  
+
+  // Controllers
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
-  
+  final AuthService _authService = AuthService();
+
+  // Error State
+  String? _emailError;
+  String? _passwordError;
   late AnimationController _controller;
   late Animation<double> _animation;
+  
+  // Controllers
+  final TextEditingController _emailController = TextEditingController();
+  final TextEditingController _passwordController = TextEditingController();
+  final AuthService _authService = AuthService();
+
+  // Error State
+  String? _emailError;
+  String? _passwordError;
 
   @override
   void initState() {
@@ -41,52 +52,65 @@ class _LoginPageState extends State<LoginPage> with SingleTickerProviderStateMix
   }
 
   Future<void> _handleLogin() async {
+    // Reset errors
+    setState(() {
+      _emailError = null;
+      _passwordError = null;
+    });
+
+    bool isValid = true;
+    if (_emailController.text.isEmpty) {
+      _emailError = 'Email is required';
+      isValid = false;
+    }
+    if (_passwordController.text.isEmpty) {
+      _passwordError = 'Password is required';
+      isValid = false;
+    }
+
+    if (!isValid) {
+      setState(() {});
+      return;
+    }
+
     setState(() {
       _isLoading = true;
-      _emailError = false;
-      _passwordError = false;
     });
 
     try {
-      final email = _emailController.text;
-      final password = _passwordController.text;
+      final result = await _authService.login(
+        _emailController.text,
+        _passwordController.text,
+      );
 
-      if (email.isEmpty || password.isEmpty) {
-        setState(() {
-          _emailError = email.isEmpty;
-          _passwordError = password.isEmpty;
-          _isLoading = false;
-        });
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text("Please fill in all fields")),
-        );
-        return;
-      }
+      setState(() {
+        _isLoading = false;
+      });
 
-      final result = await AuthService().login(email, password);
-
-      if (mounted) {
-        setState(() {
-          _isLoading = false;
-        });
-
-        if (result['success'] == true) {
+      if (result['success'] == true) {
+        if (mounted) {
           Navigator.pushReplacementNamed(context, '/home');
-        } else {
+        }
+      } else {
+        if (mounted) {
           setState(() {
-            _emailError = true;
-            _passwordError = true;
+            String msg = result['message'] ?? 'Login failed';
+            // Simple heuristic to assign error to correct field
+            if (msg.toLowerCase().contains('email') || msg.toLowerCase().contains('user')) {
+               _emailError = msg;
+            } else if (msg.toLowerCase().contains('password')) {
+               _passwordError = msg;
+            } else {
+               _passwordError = msg;
+            }
           });
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text("Login failed. Check your credentials.")),
-          );
         }
       }
     } catch (e) {
+      setState(() {
+        _isLoading = false;
+      });
       if (mounted) {
-        setState(() {
-          _isLoading = false;
-        });
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text("An error occurred: $e")),
         );
@@ -202,13 +226,34 @@ class _LoginPageState extends State<LoginPage> with SingleTickerProviderStateMix
               ),
             ),
 
-            // Bottom Sheet Form
-            DraggableScrollableSheet(
-              initialChildSize: 0.1,
-              minChildSize: 0.07,
-              maxChildSize: 0.75,
-              builder: (BuildContext context, ScrollController scrollController) {
-                return Container(
+            // Animated Popup Form
+            AnimatedPositioned(
+              duration: const Duration(milliseconds: 600),
+              curve: Curves.easeInOutBack,
+              bottom: _isExpanded ? 0 : -MediaQuery.of(context).size.height * 0.65 + 80, // Show only header when collapsed
+              left: 0,
+              right: 0,
+              height: MediaQuery.of(context).size.height * 0.65,
+              child: GestureDetector(
+                onVerticalDragEnd: (details) {
+                   if (details.primaryVelocity! < 0) {
+                     // Swipe Up
+                     setState(() {
+                       _isExpanded = true;
+                     });
+                   } else if (details.primaryVelocity! > 0) {
+                     // Swipe Down
+                     setState(() {
+                       _isExpanded = false;
+                     });
+                   }
+                },
+                onTap: () {
+                  setState(() {
+                    _isExpanded = !_isExpanded;
+                  });
+                },
+                child: Container(
                   padding: const EdgeInsets.fromLTRB(30, 20, 30, 30),
                   decoration: const BoxDecoration(
                     color: Colors.white,
@@ -226,24 +271,27 @@ class _LoginPageState extends State<LoginPage> with SingleTickerProviderStateMix
                     ],
                   ),
                   child: SingleChildScrollView(
-                    controller: scrollController,
                     physics: const BouncingScrollPhysics(),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Center(
-                          child: AnimatedBuilder(
-                            animation: _animation,
-                            builder: (context, child) {
-                              return Transform.translate(
-                                offset: Offset(0, -_animation.value),
-                                child: child,
-                              );
-                            },
-                            child: Icon(
-                              Icons.keyboard_arrow_up_rounded,
-                              color: Colors.grey.shade400,
-                              size: 30,
+                          child: AnimatedRotation(
+                            duration: const Duration(milliseconds: 400),
+                            turns: _isExpanded ? 0.5 : 0, // Rotate arrow
+                            child: AnimatedBuilder(
+                              animation: _animation,
+                              builder: (context, child) {
+                                return Transform.translate(
+                                  offset: Offset(0, _isExpanded ? 0 : -_animation.value), // Only bounce when collapsed
+                                  child: child,
+                                );
+                              },
+                              child: Icon(
+                                Icons.keyboard_arrow_up_rounded,
+                                color: Colors.grey.shade400,
+                                size: 30,
+                              ),
                             ),
                           ),
                         ),
@@ -292,12 +340,18 @@ class _LoginPageState extends State<LoginPage> with SingleTickerProviderStateMix
                         const SizedBox(height: 10),
                         TextField(
                           controller: _emailController,
-                          onChanged: (_) => setState(() => _emailError = false),
+                          onChanged: (_) {
+                            if (_emailError != null) {
+                              setState(() {
+                                _emailError = null;
+                              });
+                            }
+                          },
                           decoration: InputDecoration(
                             prefixIcon: Icon(Icons.email_outlined, color: Colors.grey.shade400),
                             hintText: 'email@example.com',
                             hintStyle: TextStyle(color: Colors.grey.shade400),
-                            errorText: _emailError ? "Please check your email" : null,
+                            errorText: _emailError,
                             filled: true,
                             fillColor: Colors.grey.shade50,
                             border: OutlineInputBorder(
@@ -306,11 +360,19 @@ class _LoginPageState extends State<LoginPage> with SingleTickerProviderStateMix
                             ),
                             enabledBorder: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(20),
-                              borderSide: BorderSide(color: _emailError ? Colors.red : Colors.grey.shade200),
+                              borderSide: BorderSide(color: _emailError != null ? Colors.red : Colors.grey.shade200),
                             ),
                             focusedBorder: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(20),
-                              borderSide: BorderSide(color: _emailError ? Colors.red : AppColors.primary),
+                              borderSide: BorderSide(color: _emailError != null ? Colors.red : AppColors.primary),
+                            ),
+                            errorBorder: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(20),
+                              borderSide: const BorderSide(color: AppColors.error),
+                            ),
+                            focusedErrorBorder: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(20),
+                              borderSide: const BorderSide(color: AppColors.error, width: 2),
                             ),
                             contentPadding: const EdgeInsets.symmetric(
                               horizontal: 20,
@@ -331,12 +393,18 @@ class _LoginPageState extends State<LoginPage> with SingleTickerProviderStateMix
                         TextField(
                           controller: _passwordController,
                           obscureText: _isObscured,
-                          onChanged: (_) => setState(() => _passwordError = false),
+                          onChanged: (_) {
+                            if (_passwordError != null) {
+                              setState(() {
+                                _passwordError = null;
+                              });
+                            }
+                          },
                           decoration: InputDecoration(
                             prefixIcon: Icon(Icons.lock_outlined, color: Colors.grey.shade400),
                             hintText: 'Enter your password...',
                             hintStyle: TextStyle(color: Colors.grey.shade400),
-                            errorText: _passwordError ? "Please check your password" : null,
+                            errorText: _passwordError,
                             filled: true,
                             fillColor: Colors.grey.shade50,
                             suffixIcon: Padding(
@@ -361,11 +429,19 @@ class _LoginPageState extends State<LoginPage> with SingleTickerProviderStateMix
                             ),
                             enabledBorder: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(20),
-                              borderSide: BorderSide(color: _passwordError ? Colors.red : Colors.grey.shade200),
+                              borderSide: BorderSide(color: _passwordError != null ? Colors.red : Colors.grey.shade200),
                             ),
                             focusedBorder: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(20),
-                              borderSide: BorderSide(color: _passwordError ? Colors.red : AppColors.primary),
+                              borderSide: BorderSide(color: _passwordError != null ? Colors.red : AppColors.primary),
+                            ),
+                            errorBorder: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(20),
+                              borderSide: const BorderSide(color: AppColors.error),
+                            ),
+                            focusedErrorBorder: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(20),
+                              borderSide: const BorderSide(color: AppColors.error, width: 2),
                             ),
                             contentPadding: const EdgeInsets.symmetric(
                               horizontal: 20,
@@ -385,7 +461,7 @@ class _LoginPageState extends State<LoginPage> with SingleTickerProviderStateMix
                             child: Text(
                               'Forgot password?',
                               style: TextStyle(
-                                color: AppColors.primary.withOpacity(0.8),
+                                color: AppColors.primary.withValues(alpha: 0.8),
                                 fontWeight: FontWeight.w600,
                                 fontSize: 13,
                               ),
@@ -402,13 +478,20 @@ class _LoginPageState extends State<LoginPage> with SingleTickerProviderStateMix
                               backgroundColor: AppColors.primary,
                               foregroundColor: Colors.white,
                               elevation: 2,
-                              shadowColor: AppColors.primary.withOpacity(0.3),
+                              shadowColor: AppColors.primary.withValues(alpha: 0.3),
                               shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(20),
                               ),
                             ),
                             child: _isLoading 
-                              ? const CircularProgressIndicator(color: Colors.white)
+                              ? const SizedBox(
+                                  height: 24,
+                                  width: 24,
+                                  child: CircularProgressIndicator(
+                                    color: Colors.white,
+                                    strokeWidth: 2,
+                                  ),
+                                )
                               : const Text(
                                   'Log In',
                                   style: TextStyle(
@@ -464,8 +547,8 @@ class _LoginPageState extends State<LoginPage> with SingleTickerProviderStateMix
                       ],
                     ),
                   ),
-                );
-              },
+                ),
+              ),
             ),
           ],
         ),
@@ -473,3 +556,4 @@ class _LoginPageState extends State<LoginPage> with SingleTickerProviderStateMix
     );
   }
 }
+

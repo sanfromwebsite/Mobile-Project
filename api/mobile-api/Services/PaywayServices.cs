@@ -35,7 +35,7 @@ namespace mobile_api.Services
                 : billNumber;
 
             var mobile = string.IsNullOrWhiteSpace(mobileNumber)
-                ? "85512233457"
+                ? "85511414213"
                 : mobileNumber;
 
             var expirationTime = DateTimeOffset.UtcNow.AddMinutes(QR_EXPIRATION_MINUTES);

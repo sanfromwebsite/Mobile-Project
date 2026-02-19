@@ -1,6 +1,10 @@
 import 'package:flutter/material.dart';
 import '../../../../core/constants/app_colors.dart';
 import '../../../../widget/settings_page.dart';
+import '../../../../features/auth/data/auth_service.dart';
+import '../../../../features/auth/presentation/pages/login_page.dart';
+import 'dart:convert';
+import 'package:shared_preferences/shared_preferences.dart';
 
 
 
@@ -46,8 +50,53 @@ class MenuPage extends StatelessWidget {
   }
 }
 
-class SideMenuDrawer extends StatelessWidget {
+class SideMenuDrawer extends StatefulWidget {
   const SideMenuDrawer({super.key});
+
+  @override
+  State<SideMenuDrawer> createState() => _SideMenuDrawerState();
+}
+
+class _SideMenuDrawerState extends State<SideMenuDrawer> {
+  String _name = "Loading...";
+  String _email = "Loading...";
+  String? _photoUrl;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadUserData();
+  }
+
+  Future<void> _loadUserData() async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      final userDataString = prefs.getString('user_data');
+
+      if (userDataString != null) {
+        final userData = json.decode(userDataString);
+        final profile = userData['profile'];
+        
+        setState(() {
+          _email = userData['email'] ?? userData['Email'] ?? "No Email";
+          if (profile != null) {
+             final fname = profile['fname'] ?? profile['Fname'] ?? "";
+             final lname = profile['lname'] ?? profile['Lname'] ?? "";
+             _name = "$fname $lname".trim();
+             _photoUrl = profile['photo'] ?? profile['Photo'];
+          } else {
+            _name = "User";
+          }
+        });
+      }
+    } catch (e) {
+      // Handle error or keep defaults
+      setState(() {
+        _name = "Error loading user";
+      });
+    }
+  }
+
 
   @override
   Widget build(BuildContext context) {
@@ -135,48 +184,67 @@ class SideMenuDrawer extends StatelessWidget {
               ),
               child: Row(
                 children: [
-                  const CircleAvatar(
+                   CircleAvatar(
                     radius: 25,
                     backgroundColor: Colors.grey,
-                    child: Icon(Icons.person, color: Colors.white),
+                    backgroundImage: _photoUrl != null ? NetworkImage(_photoUrl!) : null,
+                    child: _photoUrl == null ? const Icon(Icons.person, color: Colors.white) : null,
                   ),
                   const SizedBox(width: 12),
                   Expanded(
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
-                      children: const [
+                      children: [
                         Text(
-                          "Linh Sokheng",
-                          style: TextStyle(
+                          _name,
+                          style: const TextStyle(
                             color: Colors.white,
                             fontWeight: FontWeight.bold,
                           ),
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
                         ),
                         Text(
-                          "heng@gmail.com",
-                          style: TextStyle(
+                          _email,
+                          style: const TextStyle(
                             color: Colors.white70,
                             fontSize: 12,
                           ),
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
                         ),
                       ],
                     ),
                   ),
-                  Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                    decoration: BoxDecoration(
-                      border: Border.all(color: Colors.white70),
-                      borderRadius: BorderRadius.circular(4),
-                    ),
-                    child: Row(
-                      children: const [
-                        Icon(Icons.logout, color: Colors.white, size: 14),
-                        SizedBox(width: 4),
-                        Text(
-                          "LogOut",
-                          style: TextStyle(color: Colors.white, fontSize: 12),
-                        ),
-                      ],
+                  InkWell(
+                    onTap: () async {
+                      // Call implementing AuthService logout
+                      // Note: We need to import AuthService and LoginPage
+                       await AuthService().logout();
+                       if (context.mounted) {
+                         Navigator.pushAndRemoveUntil(
+                           context,
+                           MaterialPageRoute(builder: (context) => const LoginPage()),
+                           (route) => false,
+                         );
+                       }
+                    },
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                      decoration: BoxDecoration(
+                        border: Border.all(color: Colors.white70),
+                        borderRadius: BorderRadius.circular(4),
+                      ),
+                      child: Row(
+                        children: const [
+                          Icon(Icons.logout, color: Colors.white, size: 14),
+                          SizedBox(width: 4),
+                          Text(
+                            "LogOut",
+                            style: TextStyle(color: Colors.white, fontSize: 12),
+                          ),
+                        ],
+                      ),
                     ),
                   )
                 ],

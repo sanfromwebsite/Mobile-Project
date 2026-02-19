@@ -1,8 +1,12 @@
 {
   "Files": [
     {
-      "Id": "D:\\flutter\\project\\mobile\\Mobile-Project\\api\\mobile-api\\wwwroot\\uploads\\books\\1662062e-2c20-456b-be42-126622aebfca.jpeg",
-      "PackagePath": "staticwebassets\\uploads\\books\\1662062e-2c20-456b-be42-126622aebfca.jpeg"
+      "Id": "D:\\flutter\\project\\mobile\\Mobile-Project\\api\\mobile-api\\wwwroot\\uploads\\books\\281e11bf-27c0-4a5d-bf95-f5205ab1214c.png",
+      "PackagePath": "staticwebassets\\uploads\\books\\281e11bf-27c0-4a5d-bf95-f5205ab1214c.png"
+    },
+    {
+      "Id": "D:\\flutter\\project\\mobile\\Mobile-Project\\api\\mobile-api\\wwwroot\\uploads\\books\\c2fb9cc7-1618-47a7-ae88-b8e887045f6a.png",
+      "PackagePath": "staticwebassets\\uploads\\books\\c2fb9cc7-1618-47a7-ae88-b8e887045f6a.png"
     },
     {
       "Id": "D:\\flutter\\project\\mobile\\Mobile-Project\\api\\mobile-api\\wwwroot\\uploads\\profiles\\default.png",

@@ -5,8 +5,9 @@ import 'map_picker_page.dart';
 class AddressEditPage extends StatefulWidget {
   final String? initialAddress;
   final String? initialPhone;
+  final String? initialDeliveryMethod;
 
-  const AddressEditPage({super.key, this.initialAddress, this.initialPhone});
+  const AddressEditPage({super.key, this.initialAddress, this.initialPhone, this.initialDeliveryMethod});
 
   @override
   State<AddressEditPage> createState() => _AddressEditPageState();
@@ -28,7 +29,40 @@ class _AddressEditPageState extends State<AddressEditPage> {
     _phoneController = TextEditingController(text: widget.initialPhone ?? "012 345 678");
     _addressController = TextEditingController(text: widget.initialAddress ?? "ផ្ទះលេខ ១២៣, ផ្លូវកម្ពុជាក្រោម");
     _cityController = TextEditingController(text: "ភ្នំពេញ");
+    _selectedDelivery = widget.initialDeliveryMethod ?? "J&T";
   }
+
+  // Delivery Methods
+  String _selectedDelivery = "J&T";
+  final List<Map<String, dynamic>> _deliveryOptions = [
+    {
+      "id": "J&T",
+      "name": "J&T Express",
+      "desc": "Regular Delivery",
+      "price": 1.50,
+      "duration": "1-2 Days",
+      "image": "assets/images/j&t.jpg",
+      "color": Colors.red,
+    },
+    {
+      "id": "VET",
+      "name": "Vireak Buntham",
+      "desc": "Standard Delivery",
+      "price": 1.00,
+      "duration": "2-3 Days",
+      "image": "assets/images/vet.png",
+      "color": Colors.blue,
+    },
+    {
+      "id": "CAPITOL",
+      "name": "Capitol Tours",
+      "desc": "Economy Save",
+      "price": 0.80,
+      "duration": "3-5 Days",
+      "icon": Icons.home_work_outlined,
+      "color": Colors.orange,
+    }
+  ];
 
   @override
   void dispose() {
@@ -66,6 +100,10 @@ class _AddressEditPageState extends State<AddressEditPage> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
+              _buildSectionTitle(LanguageService().translate('delivery_method')),
+              _buildDeliverySelector(),
+              const SizedBox(height: 25),
+
               _buildSectionTitle(LanguageService().translate('contact_info')),
               _buildTextField(LanguageService().translate('name_label'), _nameController, Icons.person_outline),
               const SizedBox(height: 15),
@@ -128,6 +166,7 @@ class _AddressEditPageState extends State<AddressEditPage> {
                       Navigator.pop(context, {
                         'address': _addressController.text,
                         'phone': _phoneController.text,
+                        'deliveryMethod': _selectedDelivery,
                       });
                     }
                   },
@@ -205,6 +244,102 @@ class _AddressEditPageState extends State<AddressEditPage> {
           }
           return null;
         },
+      ),
+    );
+  }
+  Widget _buildDeliverySelector() {
+    final theme = Theme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
+
+    return SingleChildScrollView(
+      scrollDirection: Axis.horizontal,
+      child: Row(
+        children: _deliveryOptions.map((option) {
+          final isSelected = _selectedDelivery == option['id'];
+          return GestureDetector(
+            onTap: () {
+              setState(() {
+                _selectedDelivery = option['id'];
+              });
+            },
+            child: AnimatedContainer(
+              duration: const Duration(milliseconds: 300),
+              margin: const EdgeInsets.only(right: 15),
+              width: 140, // Slightly wider for images
+              padding: const EdgeInsets.all(12),
+              decoration: BoxDecoration(
+                color: isSelected 
+                    ? (isDark ? const Color(0xFF5a7335).withOpacity(0.3) : const Color(0xFF5a7335).withOpacity(0.1))
+                    : theme.cardColor,
+                borderRadius: BorderRadius.circular(16),
+                border: Border.all(
+                  color: isSelected ? const Color(0xFF5a7335) : Colors.transparent,
+                  width: 2,
+                ),
+                boxShadow: [
+                  if (!isSelected)
+                    BoxShadow(
+                      color: Colors.black.withOpacity(0.05),
+                      blurRadius: 10,
+                      offset: const Offset(0, 4),
+                    ),
+                ],
+              ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                   Container(
+                    height: 50,
+                    width: 50,
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      color: Colors.white,
+                      image: option['image'] != null 
+                        ? DecorationImage(
+                            image: AssetImage(option['image']),
+                            fit: BoxFit.contain, // Adjust fit as needed
+                          )
+                        : null,
+                    ),
+                    child: option['image'] == null 
+                      ? Icon(option['icon'], color: option['color'], size: 24)
+                      : null,
+                  ),
+                  const SizedBox(height: 12),
+                  Text(
+                    option['name'],
+                    textAlign: TextAlign.center,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: TextStyle(
+                      fontFamily: 'Hanuman',
+                      fontWeight: FontWeight.bold,
+                      fontSize: 14,
+                      color: isSelected ? const Color(0xFF5a7335) : theme.textTheme.bodyLarge?.color,
+                    ),
+                  ),
+                  const SizedBox(height: 4),
+                  Text(
+                    option['duration'],
+                    style: TextStyle(
+                      fontSize: 11,
+                      color: Colors.grey[600],
+                    ),
+                  ),
+                  const SizedBox(height: 8),
+                  Text(
+                    "\$${option['price'].toStringAsFixed(2)}",
+                    style: const TextStyle(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 14,
+                      color: Color(0xFF5a7335),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          );
+        }).toList(),
       ),
     );
   }

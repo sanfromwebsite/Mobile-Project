@@ -1,0 +1,66 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>mobile-api</name>
+    </assembly>
+    <members>
+        <member name="M:mobile_api.Controllers.BookController.GetAllBooks(mobile_api.Helpers.BookQueryObject)">
+            <summary>
+            The code is case-insensitive, so price_desc, Price_Desc, and PRICE_DESC will all work perfectly!
+            </summary>
+            <remarks>
+            Use 'SortBy' to sort by fields (e.g., "Name", "Price"). 
+            Add "_desc" for descending order (e.g., "Price_desc"). 
+            Sorting is case-insensitive.
+            </remarks>
+        </member>
+        <member name="T:mobile_api.Migrations.AddCategory">
+            <inheritdoc />
+        </member>
+        <member name="M:mobile_api.Migrations.AddCategory.Up(Microsoft.EntityFrameworkCore.Migrations.MigrationBuilder)">
+            <inheritdoc />
+        </member>
+        <member name="M:mobile_api.Migrations.AddCategory.Down(Microsoft.EntityFrameworkCore.Migrations.MigrationBuilder)">
+            <inheritdoc />
+        </member>
+        <member name="M:mobile_api.Migrations.AddCategory.BuildTargetModel(Microsoft.EntityFrameworkCore.ModelBuilder)">
+            <inheritdoc />
+        </member>
+        <member name="T:mobile_api.Migrations.AddCategoryIdToBookNullable">
+            <inheritdoc />
+        </member>
+        <member name="M:mobile_api.Migrations.AddCategoryIdToBookNullable.Up(Microsoft.EntityFrameworkCore.Migrations.MigrationBuilder)">
+            <inheritdoc />
+        </member>
+        <member name="M:mobile_api.Migrations.AddCategoryIdToBookNullable.Down(Microsoft.EntityFrameworkCore.Migrations.MigrationBuilder)">
+            <inheritdoc />
+        </member>
+        <member name="M:mobile_api.Migrations.AddCategoryIdToBookNullable.BuildTargetModel(Microsoft.EntityFrameworkCore.ModelBuilder)">
+            <inheritdoc />
+        </member>
+        <member name="T:mobile_api.Migrations.AddGlobalNotifications">
+            <inheritdoc />
+        </member>
+        <member name="M:mobile_api.Migrations.AddGlobalNotifications.Up(Microsoft.EntityFrameworkCore.Migrations.MigrationBuilder)">
+            <inheritdoc />
+        </member>
+        <member name="M:mobile_api.Migrations.AddGlobalNotifications.Down(Microsoft.EntityFrameworkCore.Migrations.MigrationBuilder)">
+            <inheritdoc />
+        </member>
+        <member name="M:mobile_api.Migrations.AddGlobalNotifications.BuildTargetModel(Microsoft.EntityFrameworkCore.ModelBuilder)">
+            <inheritdoc />
+        </member>
+        <member name="T:mobile_api.Migrations.InitialCreate">
+            <inheritdoc />
+        </member>
+        <member name="M:mobile_api.Migrations.InitialCreate.Up(Microsoft.EntityFrameworkCore.Migrations.MigrationBuilder)">
+            <inheritdoc />
+        </member>
+        <member name="M:mobile_api.Migrations.InitialCreate.Down(Microsoft.EntityFrameworkCore.Migrations.MigrationBuilder)">
+            <inheritdoc />
+        </member>
+        <member name="M:mobile_api.Migrations.InitialCreate.BuildTargetModel(Microsoft.EntityFrameworkCore.ModelBuilder)">
+            <inheritdoc />
+        </member>
+    </members>
+</doc>
