@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'core/constants/app_colors.dart';
 import 'features/auth/presentation/pages/login_page.dart';
+import 'Notification/notification_page.dart';
+import 'Promotions/Promotions_page.dart';
+import 'Book/book_store.dart';
 
 void main() {
   runApp(const MyApp());
@@ -23,7 +26,7 @@ class MyApp extends StatelessWidget {
         ),
         useMaterial3: true,
       ),
-      home: const LoginPage(),
+      home: NotificationPage(),
     );
   }
 }
