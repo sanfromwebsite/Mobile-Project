@@ -3,6 +3,7 @@ using mobile_api.Data;
 using mobile_api.Interfaces;
 using mobile_api.Repositories;
 using mobile_api.Services;
+using mobile_api.Models.Payway;
 
 using Microsoft.OpenApi.Models;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -11,12 +12,21 @@ using System.Text;
 using Microsoft.OpenApi;
 
 var builder = WebApplication.CreateBuilder(args);
-// builder.Services.AddOpenApi(); // Removed
+AppContext.SetSwitch("Npgsql.EnableLegacyTimestampBehavior", true);
+
+// Bind BakongSettings from appsettings.json
+builder.Services.Configure<BakongSettings>(
+    builder.Configuration.GetSection("BakongSettings"));
+
+// HttpClient + Service
+builder.Services.AddHttpClient<PaywayServices>();
+
 builder.Services.AddControllers()
     .AddJsonOptions(options =>
     {
         options.JsonSerializerOptions.ReferenceHandler = System.Text.Json.Serialization.ReferenceHandler.IgnoreCycles;
     });
+builder.Services.AddHttpContextAccessor();
 builder.Services.AddEndpointsApiExplorer();
 
 builder.Services.AddSwaggerGen(c =>
@@ -45,6 +55,10 @@ builder.Services.AddSwaggerGen(c =>
             new string[]{}
         }
     });
+
+    var xmlFile = $"{System.Reflection.Assembly.GetExecutingAssembly().GetName().Name}.xml";
+    var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
+    c.IncludeXmlComments(xmlPath);
 });
 
 builder.Services.AddAuthentication(options =>
@@ -74,6 +88,10 @@ builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IAuthorRepository, AuthorRepository>();
 builder.Services.AddScoped<IAuthRepository, AuthRepository>();
 builder.Services.AddScoped<IBookRepository, BookRepository>();
+builder.Services.AddScoped<ICartRepository, CartRepository>();
+builder.Services.AddScoped<IWishlistRepository, WishlistRepository>();
+builder.Services.AddScoped<ICategoryRepository, CategoryRepository>();
+builder.Services.AddScoped<INotificationRepository, NotificationRepository>();
 var app = builder.Build();
 
 if (app.Environment.IsDevelopment())
