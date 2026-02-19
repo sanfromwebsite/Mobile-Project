@@ -14,9 +14,12 @@ namespace mobile_api.Repositories
     public class AuthorRepository : IAuthorRepository
     {
         private readonly Database _context;
-        public AuthorRepository(Database context)
+        private readonly IWebHostEnvironment _webHostEnvironment;
+
+        public AuthorRepository(Database context, IWebHostEnvironment webHostEnvironment)
         {
             _context = context;
+            _webHostEnvironment = webHostEnvironment;
         }
 
         public async Task<List<Author>> GetAllAuthor()
@@ -26,9 +29,31 @@ namespace mobile_api.Repositories
 
         public async Task<Author> CreateAuthor(CreateAuthorDto authorDto)
         {
+            string photoPath = string.Empty;
+
+            if (authorDto.Photo != null)
+            {
+                var folderPath = Path.Combine(_webHostEnvironment.WebRootPath, "uploads", "authors");
+                if (!Directory.Exists(folderPath))
+                {
+                    Directory.CreateDirectory(folderPath);
+                }
+
+                var fileName = Guid.NewGuid().ToString() + Path.GetExtension(authorDto.Photo.FileName);
+                var filePath = Path.Combine(folderPath, fileName);
+
+                using (var stream = new FileStream(filePath, FileMode.Create))
+                {
+                    await authorDto.Photo.CopyToAsync(stream);
+                }
+
+                photoPath = Path.Combine("uploads", "authors", fileName).Replace("\\", "/");
+            }
+
             var author = new Author
             {
-                Name = authorDto.Name
+                Name = authorDto.Name,
+                Photo = photoPath
             };
             _context.Authors.Add(author);
             await _context.SaveChangesAsync();
@@ -40,6 +65,16 @@ namespace mobile_api.Repositories
 
             var author = await _context.Authors.FindAsync(id);
             if (author == null) return false;
+
+            if (!string.IsNullOrEmpty(author.Photo))
+            {
+                var filePath = Path.Combine(_webHostEnvironment.WebRootPath, author.Photo);
+                if (File.Exists(filePath))
+                {
+                    File.Delete(filePath);
+                }
+            }
+
             _context.Authors.Remove(author);
             await _context.SaveChangesAsync();
             return true;
@@ -49,7 +84,37 @@ namespace mobile_api.Repositories
         {
             var author = await _context.Authors.FindAsync(id);
             if (author == null) return null;
+
             author.Name = authorDto.Name;
+
+            if (authorDto.Photo != null)
+            {
+                if (!string.IsNullOrEmpty(author.Photo))
+                {
+                    var oldFilePath = Path.Combine(_webHostEnvironment.WebRootPath, author.Photo);
+                    if (File.Exists(oldFilePath))
+                    {
+                        File.Delete(oldFilePath);
+                    }
+                }
+
+                var folderPath = Path.Combine(_webHostEnvironment.WebRootPath, "uploads", "authors");
+                if (!Directory.Exists(folderPath))
+                {
+                    Directory.CreateDirectory(folderPath);
+                }
+
+                var fileName = Guid.NewGuid().ToString() + Path.GetExtension(authorDto.Photo.FileName);
+                var filePath = Path.Combine(folderPath, fileName);
+
+                using (var stream = new FileStream(filePath, FileMode.Create))
+                {
+                    await authorDto.Photo.CopyToAsync(stream);
+                }
+
+                author.Photo = Path.Combine("uploads", "authors", fileName).Replace("\\", "/");
+            }
+
             await _context.SaveChangesAsync();
             return author;
         }

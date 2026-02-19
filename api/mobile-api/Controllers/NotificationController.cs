@@ -44,7 +44,7 @@ namespace mobile_api.Controllers
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
 
-            var notification = await _notificationRepo.CreateNotificationAsync(createDto.Name, createDto.Desc);
+            var notification = await _notificationRepo.CreateNotificationAsync(createDto);
 
             return Ok(new
             {

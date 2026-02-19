@@ -25,6 +25,15 @@ namespace mobile_api.Controllers
             {
                 var authors = await _authorRepository.GetAllAuthor();
 
+                var baseUrl = $"{Request.Scheme}://{Request.Host.Value}/";
+                foreach (var author in authors)
+                {
+                    if (!string.IsNullOrEmpty(author.Photo) && !author.Photo.StartsWith("http"))
+                    {
+                        author.Photo = $"{baseUrl}{author.Photo}";
+                    }
+                }
+
                 return Ok(new
                 {
                     result = true,
@@ -46,10 +55,18 @@ namespace mobile_api.Controllers
             try
             {
                 var createdAuthor = await _authorRepository.CreateAuthor(createAuthorDto);
+
+                if (!string.IsNullOrEmpty(createdAuthor.Photo) && !createdAuthor.Photo.StartsWith("http"))
+                {
+                    var baseUrl = $"{Request.Scheme}://{Request.Host.Value}/";
+                    createdAuthor.Photo = $"{baseUrl}{createdAuthor.Photo}";
+                }
+
                 return Ok(new
                 {
                     result = true,
-                    message = "Create author success"
+                    message = "Create author success",
+                    data = createdAuthor
                 });
             }
             catch (Exception ex)
@@ -93,10 +110,18 @@ namespace mobile_api.Controllers
                     result = false,
                     message = "Author not found"
                 });
+
+                if (!string.IsNullOrEmpty(updatedAuthor.Photo) && !updatedAuthor.Photo.StartsWith("http"))
+                {
+                    var baseUrl = $"{Request.Scheme}://{Request.Host.Value}/";
+                    updatedAuthor.Photo = $"{baseUrl}{updatedAuthor.Photo}";
+                }
+
                 return Ok(new
                 {
                     result = true,
-                    message = "Update author success"
+                    message = "Update author success",
+                    data = updatedAuthor
                 });
             }
             catch (Exception ex)

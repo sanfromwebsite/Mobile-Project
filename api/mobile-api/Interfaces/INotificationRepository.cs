@@ -1,4 +1,5 @@
 using mobile_api.Models;
+using mobile_api.DTOs.Notification;
 
 namespace mobile_api.Interfaces
 {
@@ -6,6 +7,6 @@ namespace mobile_api.Interfaces
     {
         Task<List<Notification>> GetNotificationsAsync();
         Task<bool> ClearNotificationsAsync();
-        Task<Notification> CreateNotificationAsync(string name, string desc);
+        Task<Notification> CreateNotificationAsync(CreateNotificationDto notificationDto);
     }
 }

@@ -2,6 +2,7 @@ using Microsoft.EntityFrameworkCore;
 using mobile_api.Data;
 using mobile_api.Interfaces;
 using mobile_api.Models;
+using mobile_api.DTOs.Notification;
 
 namespace mobile_api.Repositories
 {
@@ -32,12 +33,12 @@ namespace mobile_api.Repositories
             return true;
         }
 
-        public async Task<Notification> CreateNotificationAsync(string name, string desc)
+        public async Task<Notification> CreateNotificationAsync(CreateNotificationDto notificationDto)
         {
             var notification = new Notification
             {
-                Name = name,
-                Desc = desc,
+                Name = notificationDto.Name,
+                Desc = notificationDto.Desc,
                 CreatedAt = DateTime.UtcNow
             };
 

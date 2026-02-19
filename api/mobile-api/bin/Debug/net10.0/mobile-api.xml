@@ -134,6 +134,18 @@
         <member name="M:mobile_api.Migrations.AddGlobalNotifications.BuildTargetModel(Microsoft.EntityFrameworkCore.ModelBuilder)">
             <inheritdoc />
         </member>
+        <member name="T:mobile_api.Migrations.PhotoAuthor">
+            <inheritdoc />
+        </member>
+        <member name="M:mobile_api.Migrations.PhotoAuthor.Up(Microsoft.EntityFrameworkCore.Migrations.MigrationBuilder)">
+            <inheritdoc />
+        </member>
+        <member name="M:mobile_api.Migrations.PhotoAuthor.Down(Microsoft.EntityFrameworkCore.Migrations.MigrationBuilder)">
+            <inheritdoc />
+        </member>
+        <member name="M:mobile_api.Migrations.PhotoAuthor.BuildTargetModel(Microsoft.EntityFrameworkCore.ModelBuilder)">
+            <inheritdoc />
+        </member>
         <member name="T:Program">
             <summary>
             Auto-generated public partial Program class for top-level statement apps.
