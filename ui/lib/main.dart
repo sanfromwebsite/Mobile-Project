@@ -33,7 +33,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ValueListenableBuilder<String>(
-      value_listenable: LanguageService().currentLanguage,
+      valueListenable: LanguageService().currentLanguage,
       builder: (context, languageCode, child) {
         return Consumer<ThemeService>(
           builder: (context, themeService, _) {

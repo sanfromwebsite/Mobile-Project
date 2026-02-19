@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../../../core/constants/app_colors.dart';
+import '../../data/auth_service.dart';
 import 'signup_page.dart';
 
 class LoginPage extends StatefulWidget {
@@ -24,15 +25,6 @@ class _LoginPageState extends State<LoginPage> with SingleTickerProviderStateMix
   String? _passwordError;
   late AnimationController _controller;
   late Animation<double> _animation;
-  
-  // Controllers
-  final TextEditingController _emailController = TextEditingController();
-  final TextEditingController _passwordController = TextEditingController();
-  final AuthService _authService = AuthService();
-
-  // Error State
-  String? _emailError;
-  String? _passwordError;
 
   @override
   void initState() {

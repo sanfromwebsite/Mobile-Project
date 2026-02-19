@@ -3,11 +3,7 @@ import '../core/constants/app_colors.dart';
 import '../features/menu/presentation/pages/menu_page.dart';
 
 import 'dart:async';
-<<<<<<< Updated upstream
 import 'wishlist_page.dart';
-=======
-
->>>>>>> Stashed changes
 import 'cart_page.dart';
 
 import '../l10n/language_service.dart';
@@ -15,11 +11,7 @@ import '../l10n/language_service.dart';
 import '../theme/theme_service.dart';
 import '../theme/app_theme.dart';
 
-<<<<<<< Updated upstream
-=======
 
-
->>>>>>> Stashed changes
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
 
@@ -194,14 +186,7 @@ class _HomeScreenState extends State<HomeScreen> {
               child: const Icon(Icons.favorite_border, color: Colors.white),
             ),
             onPressed: () {
-<<<<<<< Updated upstream
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => const WishlistPage()),
-              );
-=======
                Navigator.pushNamed(context, '/wishlist');
->>>>>>> Stashed changes
             },
           ),
           const SizedBox(width: 10),

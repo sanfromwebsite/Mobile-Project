@@ -82,7 +82,6 @@ class _CartPageState extends State<CartPage> {
   double? _lat;
   double? _lng;
   bool _isLoadingLocation = true;
-  // bool _isSummaryExpanded = true; // Default expanded - This line is a duplicate and should be removed or resolved with the one at the top. Keeping the one at the top.
 
   @override
   void initState() {
