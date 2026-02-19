@@ -14,11 +14,15 @@ class AuthService {
           'Email': email,
           'Password': password,
         },
-      );
+      ).timeout(const Duration(seconds: 15));
 
       final data = json.decode(response.body);
 
       if (response.statusCode == 200 && data['result'] == true) {
+        if (data['token'] == null) {
+          return {'success': false, 'message': 'Invalid response from server (No Token)'};
+        }
+        
         // Save Token
         final prefs = await SharedPreferences.getInstance();
         await prefs.setString('token', data['token']);
@@ -35,8 +39,10 @@ class AuthService {
           'message': data['message'] ?? 'Login failed'
         };
       }
+    } on http.ClientException catch (e) {
+      return {'success': false, 'message': 'Network error: $e'};
     } catch (e) {
-      return {'success': false, 'message': 'Connection error: $e'};
+      return {'success': false, 'message': 'Error: $e'};
     }
   }
 

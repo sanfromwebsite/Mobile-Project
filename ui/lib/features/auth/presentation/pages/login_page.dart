@@ -75,34 +75,37 @@ class _LoginPageState extends State<LoginPage> with SingleTickerProviderStateMix
         _passwordController.text,
       );
 
-      setState(() {
-        _isLoading = false;
-      });
+      if (!mounted) return;
 
       if (result['success'] == true) {
-        if (mounted) {
-          Navigator.pushReplacementNamed(context, '/home');
-        }
+        setState(() {
+          _isLoading = false;
+        });
+        
+        Navigator.pushAndRemoveUntil(
+          context,
+          MaterialPageRoute(builder: (context) => const HomeScreen()),
+          (route) => false,
+        );
       } else {
-        if (mounted) {
-          setState(() {
-            String msg = result['message'] ?? 'Login failed';
-            // Simple heuristic to assign error to correct field
-            if (msg.toLowerCase().contains('email') || msg.toLowerCase().contains('user')) {
-               _emailError = msg;
-            } else if (msg.toLowerCase().contains('password')) {
-               _passwordError = msg;
-            } else {
-               _passwordError = msg;
-            }
-          });
-        }
+        setState(() {
+          _isLoading = false;
+          String msg = result['message'] ?? 'Login failed';
+          // Simple heuristic to assign error to correct field
+          if (msg.toLowerCase().contains('email') || msg.toLowerCase().contains('user')) {
+             _emailError = msg;
+          } else if (msg.toLowerCase().contains('password')) {
+             _passwordError = msg;
+          } else {
+             _passwordError = msg;
+          }
+        });
       }
     } catch (e) {
-      setState(() {
-        _isLoading = false;
-      });
       if (mounted) {
+        setState(() {
+          _isLoading = false;
+        });
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text("An error occurred: $e")),
         );
