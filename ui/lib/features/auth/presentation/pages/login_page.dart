@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../../../../core/constants/app_colors.dart';
 import '../../../home/presentation/pages/home_page.dart';
+import '../../data/auth_service.dart';
 import 'signup_page.dart';
 
 class LoginPage extends StatefulWidget {
@@ -12,6 +13,13 @@ class LoginPage extends StatefulWidget {
 
 class _LoginPageState extends State<LoginPage> with SingleTickerProviderStateMixin {
   bool _isObscured = true;
+  bool _isLoading = false;
+  bool _emailError = false;
+  bool _passwordError = false;
+  
+  final TextEditingController _emailController = TextEditingController();
+  final TextEditingController _passwordController = TextEditingController();
+  
   late AnimationController _controller;
   late Animation<double> _animation;
 
@@ -27,7 +35,63 @@ class _LoginPageState extends State<LoginPage> with SingleTickerProviderStateMix
   @override
   void dispose() {
     _controller.dispose();
+    _emailController.dispose();
+    _passwordController.dispose();
     super.dispose();
+  }
+
+  Future<void> _handleLogin() async {
+    setState(() {
+      _isLoading = true;
+      _emailError = false;
+      _passwordError = false;
+    });
+
+    try {
+      final email = _emailController.text;
+      final password = _passwordController.text;
+
+      if (email.isEmpty || password.isEmpty) {
+        setState(() {
+          _emailError = email.isEmpty;
+          _passwordError = password.isEmpty;
+          _isLoading = false;
+        });
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text("Please fill in all fields")),
+        );
+        return;
+      }
+
+      final result = await AuthService().login(email, password);
+
+      if (mounted) {
+        setState(() {
+          _isLoading = false;
+        });
+
+        if (result['success'] == true) {
+          Navigator.pushReplacementNamed(context, '/home');
+        } else {
+          setState(() {
+            _emailError = true;
+            _passwordError = true;
+          });
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text("Login failed. Check your credentials.")),
+          );
+        }
+      }
+    } catch (e) {
+      if (mounted) {
+        setState(() {
+          _isLoading = false;
+        });
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text("An error occurred: $e")),
+        );
+      }
+    }
   }
 
   @override
@@ -227,10 +291,13 @@ class _LoginPageState extends State<LoginPage> with SingleTickerProviderStateMix
                         ),
                         const SizedBox(height: 10),
                         TextField(
+                          controller: _emailController,
+                          onChanged: (_) => setState(() => _emailError = false),
                           decoration: InputDecoration(
                             prefixIcon: Icon(Icons.email_outlined, color: Colors.grey.shade400),
                             hintText: 'email@example.com',
                             hintStyle: TextStyle(color: Colors.grey.shade400),
+                            errorText: _emailError ? "Please check your email" : null,
                             filled: true,
                             fillColor: Colors.grey.shade50,
                             border: OutlineInputBorder(
@@ -239,11 +306,11 @@ class _LoginPageState extends State<LoginPage> with SingleTickerProviderStateMix
                             ),
                             enabledBorder: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(20),
-                              borderSide: BorderSide(color: Colors.grey.shade200),
+                              borderSide: BorderSide(color: _emailError ? Colors.red : Colors.grey.shade200),
                             ),
                             focusedBorder: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(20),
-                              borderSide: const BorderSide(color: AppColors.primary),
+                              borderSide: BorderSide(color: _emailError ? Colors.red : AppColors.primary),
                             ),
                             contentPadding: const EdgeInsets.symmetric(
                               horizontal: 20,
@@ -262,11 +329,14 @@ class _LoginPageState extends State<LoginPage> with SingleTickerProviderStateMix
                         ),
                         const SizedBox(height: 10),
                         TextField(
+                          controller: _passwordController,
                           obscureText: _isObscured,
+                          onChanged: (_) => setState(() => _passwordError = false),
                           decoration: InputDecoration(
                             prefixIcon: Icon(Icons.lock_outlined, color: Colors.grey.shade400),
                             hintText: 'Enter your password...',
                             hintStyle: TextStyle(color: Colors.grey.shade400),
+                            errorText: _passwordError ? "Please check your password" : null,
                             filled: true,
                             fillColor: Colors.grey.shade50,
                             suffixIcon: Padding(
@@ -291,11 +361,11 @@ class _LoginPageState extends State<LoginPage> with SingleTickerProviderStateMix
                             ),
                             enabledBorder: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(20),
-                              borderSide: BorderSide(color: Colors.grey.shade200),
+                              borderSide: BorderSide(color: _passwordError ? Colors.red : Colors.grey.shade200),
                             ),
                             focusedBorder: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(20),
-                              borderSide: const BorderSide(color: AppColors.primary),
+                              borderSide: BorderSide(color: _passwordError ? Colors.red : AppColors.primary),
                             ),
                             contentPadding: const EdgeInsets.symmetric(
                               horizontal: 20,
@@ -327,14 +397,7 @@ class _LoginPageState extends State<LoginPage> with SingleTickerProviderStateMix
                           width: double.infinity,
                           height: 58,
                           child: ElevatedButton(
-                            onPressed: () {
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (context) => const HomePage(),
-                                ),
-                              );
-                            },
+                            onPressed: _isLoading ? null : _handleLogin,
                             style: ElevatedButton.styleFrom(
                               backgroundColor: AppColors.primary,
                               foregroundColor: Colors.white,
@@ -344,14 +407,16 @@ class _LoginPageState extends State<LoginPage> with SingleTickerProviderStateMix
                                 borderRadius: BorderRadius.circular(20),
                               ),
                             ),
-                            child: const Text(
-                              'Log In',
-                              style: TextStyle(
-                                fontSize: 18,
-                                fontWeight: FontWeight.bold,
-                                letterSpacing: 0.5,
-                              ),
-                            ),
+                            child: _isLoading 
+                              ? const CircularProgressIndicator(color: Colors.white)
+                              : const Text(
+                                  'Log In',
+                                  style: TextStyle(
+                                    fontSize: 18,
+                                    fontWeight: FontWeight.bold,
+                                    letterSpacing: 0.5,
+                                  ),
+                                ),
                           ),
                         ),
                         const SizedBox(height: 35),

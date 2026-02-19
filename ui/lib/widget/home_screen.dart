@@ -3,37 +3,13 @@ import '../core/constants/app_colors.dart';
 import '../features/menu/presentation/pages/menu_page.dart';
 
 import 'dart:async';
-import 'payment_detail.dart';
+import 'wishlist_page.dart';
 import 'cart_page.dart';
 
 import '../l10n/language_service.dart';
 
 import '../theme/theme_service.dart';
 import '../theme/app_theme.dart';
-
-void main() {
-  WidgetsFlutterBinding.ensureInitialized();
-  
-  runApp(
-    ValueListenableBuilder<String>(
-      valueListenable: LanguageService().currentLanguage,
-      builder: (context, languageCode, child) {
-        return ValueListenableBuilder<ThemeMode>(
-          valueListenable: ThemeService().themeMode,
-          builder: (context, themeMode, child) {
-            return MaterialApp(
-              debugShowCheckedModeBanner: false,
-              theme: AppTheme.light,
-              darkTheme: AppTheme.dark,
-              themeMode: themeMode,
-              home: const HomeScreen(),
-            );
-          },
-        );
-      },
-    ),
-  );
-}
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -206,12 +182,12 @@ class _HomeScreenState extends State<HomeScreen> {
                 color: Colors.white.withOpacity(0.2),
                 borderRadius: BorderRadius.circular(8),
               ),
-              child: const Icon(Icons.payment, color: Colors.white),
+              child: const Icon(Icons.favorite_border, color: Colors.white),
             ),
             onPressed: () {
               Navigator.push(
                 context,
-                MaterialPageRoute(builder: (context) => const PaymentDetail()),
+                MaterialPageRoute(builder: (context) => const WishlistPage()),
               );
             },
           ),

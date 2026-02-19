@@ -1,6 +1,7 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:provider/provider.dart';
 import 'home_screen.dart';
 import 'address_edit_page.dart';
 
@@ -388,15 +389,13 @@ class _SettingsPageState extends State<SettingsPage> {
                 _buildSettingTile(
                   icon: Icons.dark_mode_outlined,
                   title: _get('dark_mode'),
-                  trailing: ValueListenableBuilder<ThemeMode>(
-                    valueListenable: ThemeService().themeMode,
-                    builder: (context, themeMode, _) {
-                      final isDark = themeMode == ThemeMode.dark;
+                  trailing: Consumer<ThemeService>(
+                    builder: (context, themeService, _) {
                       return Switch(
-                        value: isDark,
+                        value: themeService.isDarkMode,
                         activeColor: const Color(0xFF5a7335),
                         onChanged: (value) {
-                          ThemeService().toggleTheme();
+                          themeService.toggleTheme();
                           ScaffoldMessenger.of(context).showSnackBar(
                             SnackBar(
                               content: Text(value ? _get('dark_mode_on') : _get('dark_mode_off')),

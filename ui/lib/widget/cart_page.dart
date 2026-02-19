@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'payment_detail.dart';
+// import 'payment_detail.dart'; // Removed as per requested deletion of Invoice UI
 import 'address_edit_page.dart';
 import 'khqr_dialog.dart';
 import 'map_picker_page.dart';
@@ -13,6 +13,7 @@ class CartPage extends StatefulWidget {
 }
 
 class _CartPageState extends State<CartPage> {
+  bool _isSummaryExpanded = false; // Persistent state for order summary visibility
   // Mock Data
   final List<Map<String, dynamic>> _cartItems = [
     {
@@ -128,55 +129,79 @@ class _CartPageState extends State<CartPage> {
                 mainAxisSize: MainAxisSize.min,
                 children: [
                    // Order Summary inside Bottom Sheet
-                   // We use the logic from _buildOrderSummary but adapted to fit here without double container
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        LanguageService().translate('order_summary'),
-                        style: TextStyle(
-                          fontFamily: 'Hanuman',
-                          fontSize: 16,
-                          fontWeight: FontWeight.bold,
-                          color: theme.textTheme.bodyLarge?.color,
-                        ),
-                      ),
-                      const SizedBox(height: 15),
-                      _buildSummaryRow(LanguageService().translate('subtotal'), _subtotal),
-                      const SizedBox(height: 8),
-                      _buildSummaryRow(LanguageService().translate('tax'), _tax),
-                      const SizedBox(height: 8),
-                      _buildSummaryRow(LanguageService().translate('delivery_fee'), _deliveryFee),
-                      const SizedBox(height: 8),
-                      _buildSummaryRow(LanguageService().translate('discount'), -_discount, isDiscount: true),
-                      const Padding(
-                        padding: EdgeInsets.symmetric(vertical: 12),
-                        child: Divider(),
-                      ),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Text(
-                            LanguageService().translate('total'),
-                            style: TextStyle(
-                              fontFamily: 'Hanuman',
-                              fontSize: 18,
-                              fontWeight: FontWeight.bold,
-                              color: theme.textTheme.bodyLarge?.color,
-                            ),
-                          ),
-                          Text(
-                            "\$${_totalPrice.toStringAsFixed(2)}",
-                            style: const TextStyle(
-                              fontSize: 24,
-                              fontWeight: FontWeight.bold,
-                              color: Color(0xFF5a7335),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ],
-                  ),
+                   // Toggleable Summary
+                   Column(
+                     children: [
+                       InkWell(
+                         onTap: () => setState(() => _isSummaryExpanded = !_isSummaryExpanded),
+                         child: Padding(
+                           padding: const EdgeInsets.symmetric(vertical: 8),
+                           child: Row(
+                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                             children: [
+                               Text(
+                                 LanguageService().translate('order_summary'),
+                                 style: TextStyle(
+                                   fontFamily: 'Hanuman',
+                                   fontSize: 16,
+                                   fontWeight: FontWeight.bold,
+                                   color: theme.textTheme.bodyLarge?.color,
+                                 ),
+                               ),
+                               Icon(
+                                 _isSummaryExpanded ? Icons.keyboard_arrow_down_rounded : Icons.keyboard_arrow_up_rounded,
+                                 color: const Color(0xFF5a7335),
+                               ),
+                             ],
+                           ),
+                         ),
+                       ),
+                       AnimatedContainer(
+                         duration: const Duration(milliseconds: 300),
+                         height: _isSummaryExpanded ? null : 0,
+                         clipBehavior: Clip.antiAlias,
+                         decoration: const BoxDecoration(),
+                         child: Column(
+                           children: [
+                             const SizedBox(height: 15),
+                             _buildSummaryRow(LanguageService().translate('subtotal'), _subtotal),
+                             const SizedBox(height: 8),
+                             _buildSummaryRow(LanguageService().translate('tax'), _tax),
+                             const SizedBox(height: 8),
+                             _buildSummaryRow(LanguageService().translate('delivery_fee'), _deliveryFee),
+                             const SizedBox(height: 8),
+                             _buildSummaryRow(LanguageService().translate('discount'), -_discount, isDiscount: true),
+                             const Padding(
+                               padding: EdgeInsets.symmetric(vertical: 12),
+                               child: Divider(),
+                             ),
+                           ],
+                         ),
+                       ),
+                       Row(
+                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                         children: [
+                           Text(
+                             LanguageService().translate('total'),
+                             style: TextStyle(
+                               fontFamily: 'Hanuman',
+                               fontSize: 18,
+                               fontWeight: FontWeight.bold,
+                               color: theme.textTheme.bodyLarge?.color,
+                             ),
+                           ),
+                           Text(
+                             "\$${_totalPrice.toStringAsFixed(2)}",
+                             style: const TextStyle(
+                               fontSize: 22,
+                               fontWeight: FontWeight.bold,
+                               color: Color(0xFF5a7335),
+                             ),
+                           ),
+                         ],
+                       ),
+                     ],
+                   ),
 
                   const SizedBox(height: 20),
 

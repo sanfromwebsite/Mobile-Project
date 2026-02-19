@@ -1,16 +1,18 @@
 
 import 'package:flutter/material.dart';
 
-class ThemeService {
+class ThemeService extends ChangeNotifier {
   static final ThemeService _instance = ThemeService._internal();
   factory ThemeService() => _instance;
   ThemeService._internal();
 
-  final ValueNotifier<ThemeMode> themeMode = ValueNotifier(ThemeMode.light);
+  ThemeMode _themeMode = ThemeMode.light;
+  ThemeMode get themeMode => _themeMode;
 
   void toggleTheme() {
-    themeMode.value = themeMode.value == ThemeMode.light ? ThemeMode.dark : ThemeMode.light;
+    _themeMode = (_themeMode == ThemeMode.light) ? ThemeMode.dark : ThemeMode.light;
+    notifyListeners();
   }
     
-  bool get isDarkMode => themeMode.value == ThemeMode.dark;
+  bool get isDarkMode => _themeMode == ThemeMode.dark;
 }
