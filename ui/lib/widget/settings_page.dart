@@ -4,6 +4,8 @@ import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
 import 'home_screen.dart';
 import 'address_edit_page.dart';
+import '../features/auth/data/auth_service.dart';
+import '../features/auth/presentation/pages/login_page.dart';
 
 import '../l10n/language_service.dart';
 import '../theme/theme_service.dart'; // Import ThemeService
@@ -217,15 +219,24 @@ class _SettingsPageState extends State<SettingsPage> {
             child: Text(_get('cancel'), style: const TextStyle(color: Colors.grey)),
           ),
           ElevatedButton(
-            onPressed: () {
+            onPressed: () async {
               Navigator.pop(context); // Close dialog
-               ScaffoldMessenger.of(context).showSnackBar(
-                 SnackBar(content: Text(_get('logged_out'))),
-              );
-              Navigator.pushReplacement(
-                context, 
-                MaterialPageRoute(builder: (context) => const HomeScreen()) // Go back to Home for now
-              );
+              
+              // Call Logout API and clear local storage
+              await AuthService().logout();
+              
+              if (context.mounted) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(content: Text(_get('logged_out'))),
+                );
+                
+                // Redirect to Login Page
+                Navigator.pushAndRemoveUntil(
+                  context,
+                  MaterialPageRoute(builder: (context) => const LoginPage()),
+                  (route) => false,
+                );
+              }
             },
             style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
             child: Text(_get('logout')),
