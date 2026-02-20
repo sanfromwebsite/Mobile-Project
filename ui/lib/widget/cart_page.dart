@@ -6,6 +6,7 @@ import 'map_picker_page.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:geocoding/geocoding.dart';
 import '../l10n/language_service.dart';
+import '../features/payway/services/payway_service.dart';
 
 class CartPage extends StatefulWidget {
   const CartPage({super.key});
@@ -336,6 +337,76 @@ class _CartPageState extends State<CartPage> {
   double get _totalPrice => _subtotal + _tax + _deliveryFee - _discount;
 
   @override
+  Future<void> _handleCheckout() async {
+    // 1. Show Loading
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (context) => const Center(child: CircularProgressIndicator(color: Color(0xFF5a7335))),
+    );
+
+    try {
+      // 2. Call PayWay API
+      final service = PayWayService();
+      // Use a real bill number generator in production
+      final billNumber = "INV-${DateTime.now().millisecondsSinceEpoch}"; 
+      
+      final result = await service.generateQr(
+        _totalPrice, 
+        billNumber, 
+        _phone, 
+      );
+
+      debugPrint("PayWay Result: $result"); 
+
+      // 3. Close Loading
+      if (context.mounted) Navigator.pop(context);
+
+      // Handle camelCase (standard JSON), PascalCase (C# default), and mixed case (mD5)
+      final qrToken = result['qrToken'] ?? result['QRToken'];
+      final md5 = result['md5'] ?? result['MD5'] ?? result['mD5'];
+
+      if (qrToken != null && md5 != null) {
+          if (context.mounted) {
+            final success = await showDialog<bool>(
+              context: context,
+              barrierDismissible: false,
+              builder: (context) => KHQRDialog(
+                qrString: qrToken,
+                md5: md5,
+                amount: _totalPrice,
+              ),
+            );
+
+            if (success == true && context.mounted) {
+               setState(() {
+                 _cartItems.clear();
+               });
+               ScaffoldMessenger.of(context).showSnackBar(
+                 const SnackBar(content: Text("Payment Successful! Cart Cleared.")),
+               );
+            }
+          }
+      } else {
+        // API Error or Unexpected Format
+          if (context.mounted) {
+            final msg = result['message'] ?? result['error'] ?? 'Unknown error';
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(content: Text("Error generating QR: $msg")),
+            );
+          }
+      }
+    } catch (e) {
+      // Network/Exception Error
+      if (context.mounted) {
+          Navigator.pop(context); // Close loading if still open
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text("Checkout Failed: $e")),
+          );
+      }
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
@@ -490,13 +561,7 @@ class _CartPageState extends State<CartPage> {
                     width: double.infinity,
                     height: 55,
                     child: ElevatedButton(
-                      onPressed: _cartItems.isEmpty ? null : () {
-                        showDialog(
-                          context: context,
-                          barrierDismissible: false,
-                          builder: (context) => const KHQRDialog(),
-                        );
-                      },
+                      onPressed: _cartItems.isEmpty ? null : _handleCheckout,
                       style: ElevatedButton.styleFrom(
                         backgroundColor: const Color(0xFF5a7335),
                         foregroundColor: Colors.white,
@@ -773,13 +838,7 @@ class _CartPageState extends State<CartPage> {
           width: double.infinity,
           height: 56,
           child: ElevatedButton(
-            onPressed: _cartItems.isEmpty ? null : () {
-              showDialog(
-                context: context,
-                barrierDismissible: false,
-                builder: (context) => const KHQRDialog(),
-              );
-            },
+            onPressed: _cartItems.isEmpty ? null : _handleCheckout,
             style: ElevatedButton.styleFrom(
               backgroundColor: const Color(0xFF5a7335),
               foregroundColor: Colors.white,

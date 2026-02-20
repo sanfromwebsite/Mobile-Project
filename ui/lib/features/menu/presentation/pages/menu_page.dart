@@ -5,6 +5,7 @@ import '../../../../features/auth/data/auth_service.dart';
 import '../../../../features/auth/presentation/pages/login_page.dart';
 import 'dart:convert';
 import 'package:shared_preferences/shared_preferences.dart';
+import '../../../../Book/book_store.dart';
 
 
 
@@ -156,7 +157,12 @@ class _SideMenuDrawerState extends State<SideMenuDrawer> {
                   children: [
                     _buildMenuItem(Icons.home_outlined, "ទំព័រដើម", () {}), // Home
                     _buildMenuItem(Icons.notifications_none_outlined, "ការជូនដំណឹង", () {}), // Notifications
-                    _buildMenuItem(Icons.menu_book_outlined, "សៀវភៅក្នុងហាង", () {}), // Books in store
+                    _buildMenuItem(Icons.menu_book_outlined, "សៀវភៅក្នុងហាង", () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (context) => const BookStorePage()),
+                      );
+                    }), // Books in store
                     _buildMenuItem(Icons.local_offer_outlined, "ប្រូម៉ូសិនពិសេស", () {}), // Special promotion
                     _buildMenuItem(Icons.people_outline, "ប្រភេទអ្នកនិពន្ធសៀវភៅ", () {}), // Author types
                     _buildMenuItem(Icons.videocam_outlined, "វីដេអូសង្ខេបសាច់រឿង", () {}), // Video summary
@@ -230,18 +236,23 @@ class _SideMenuDrawerState extends State<SideMenuDrawer> {
                        }
                     },
                     child: Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
                       decoration: BoxDecoration(
-                        border: Border.all(color: Colors.white70),
-                        borderRadius: BorderRadius.circular(4),
+                        border: Border.all(color: Colors.red.shade300),
+                        borderRadius: BorderRadius.circular(8),
+                        color: Colors.red.withOpacity(0.1),
                       ),
                       child: Row(
                         children: const [
-                          Icon(Icons.logout, color: Colors.white, size: 14),
-                          SizedBox(width: 4),
+                          Icon(Icons.logout, color: Colors.redAccent, size: 16),
+                          SizedBox(width: 6),
                           Text(
                             "LogOut",
-                            style: TextStyle(color: Colors.white, fontSize: 12),
+                            style: TextStyle(
+                              color: Colors.redAccent, 
+                              fontSize: 13,
+                              fontWeight: FontWeight.bold,
+                            ),
                           ),
                         ],
                       ),

@@ -69,7 +69,7 @@ namespace mobile_api.Services
                 BillNumber = bill
             };
         }
-        public async Task<PaymentStatusResponse> CheckPaymentByMd5Async(string md5)
+        public async Task<PaymentStatusResponse> CheckPaymentByMd5Async(string md5, decimal expectedAmount = 0)
         {
             var requestBody = new
             {
@@ -107,11 +107,20 @@ namespace mobile_api.Services
             }
 
             var data = root.GetProperty("data");
+            
+            decimal paidAmount = 0;
+            if (data.TryGetProperty("amount", out var amt))
+            {
+                paidAmount = amt.ValueKind == JsonValueKind.Number ? amt.GetDecimal() : decimal.Parse(amt.GetString()!);
+            }
+
+            // Verify Amount
+            bool isAmountMatch = expectedAmount > 0 ? paidAmount == expectedAmount : true;
 
             return new PaymentStatusResponse
             {
-                IsPaid = true,
-                Status = "PAID",
+                IsPaid = isAmountMatch, // Only set true if amount matches
+                Status = isAmountMatch ? "PAID" : "PARTIAL_PAID_OR_MISMATCH",
                 PaidAmount = data.TryGetProperty("amount", out var amt)
                     ? (amt.ValueKind == JsonValueKind.Number ? amt.GetDecimal() : decimal.Parse(amt.GetString()!))
                     : null,

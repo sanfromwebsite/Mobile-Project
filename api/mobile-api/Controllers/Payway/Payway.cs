@@ -39,11 +39,11 @@ namespace mobile_api.Controllers.Payway
         }
 
         [HttpGet("check-by-md5/{md5}")]
-        public async Task<IActionResult> CheckPaymentByMd5(string md5)
+        public async Task<IActionResult> CheckPaymentByMd5(string md5, [FromQuery] decimal expectedAmount = 0)
         {
             try
             {
-                var result = await _paywayService.CheckPaymentByMd5Async(md5);
+                var result = await _paywayService.CheckPaymentByMd5Async(md5, expectedAmount);
                 return Ok(result);
             }
             catch (Exception ex)

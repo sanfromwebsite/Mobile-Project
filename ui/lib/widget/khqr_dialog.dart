@@ -1,17 +1,30 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
+import 'package:qr_flutter/qr_flutter.dart';
+import '../features/payway/services/payway_service.dart';
 
 class KHQRDialog extends StatefulWidget {
-  const KHQRDialog({super.key});
+  final String qrString;
+  final String md5;
+
+  final double amount;
+
+  const KHQRDialog({
+    super.key,
+    required this.qrString,
+    required this.md5,
+    required this.amount,
+  });
 
   @override
   State<KHQRDialog> createState() => _KHQRDialogState();
 }
 
 class _KHQRDialogState extends State<KHQRDialog> {
+  final PayWayService _paywayService = PayWayService();
   bool _isSuccess = false;
   Timer? _timer;
-  int _secondsRemaining = 15; // 15 seconds to simulate bank processing
+  int _secondsRemaining = 30; // Set to 30s as requested
 
   @override
   void initState() {
@@ -20,19 +33,55 @@ class _KHQRDialogState extends State<KHQRDialog> {
   }
 
   void _startPolling() {
-    // Simulate "Checking for payment..." every second
-    _timer = Timer.periodic(const Duration(seconds: 1), (timer) {
+    _timer = Timer.periodic(const Duration(seconds: 2), (timer) async {
       if (_secondsRemaining > 0) {
         setState(() {
-          _secondsRemaining--;
+          _secondsRemaining -= 2;
         });
+        
+        try {
+          // Assuming result['status'] == 0 or similar for success
+          // Adjust based on your actual API response structure
+          // For now, let's print and assume if we get a valid response with status 0, it's success.
+          // You said "response of it md5 response as well", implies we check 
+          
+          final result = await _paywayService.checkTransaction(widget.md5, widget.amount);
+          debugPrint("Poll Result: $result");
+
+          if (mounted) {
+            // Check for both camelCase and PascalCase
+            final isPaid = result['isPaid'] ?? result['IsPaid'] == true;
+            final status = result['status'] ?? result['Status'];
+
+            if (isPaid) {
+              _timer?.cancel();
+              setState(() {
+                _isSuccess = true;
+              });
+              
+              // Close dialog after 2 seconds
+              Future.delayed(const Duration(seconds: 2), () {
+                if (mounted) {
+                   Navigator.of(context).pop(true); // Return true to indicate success
+                }
+              });
+
+            } else if (status == 'FAILED') {
+               // Handle failure
+            }
+          }
+        } catch (e) {
+          debugPrint("Polling error: $e");
+        }
+
       } else {
         timer.cancel();
-        // Payment "Received" from Bank
+        // Timeout - Close dialog
         if (mounted) {
-          setState(() {
-            _isSuccess = true;
-          });
+          Navigator.of(context).pop();
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text("QR Code expired")),
+          );
         }
       }
     });
@@ -81,10 +130,14 @@ class _KHQRDialogState extends State<KHQRDialog> {
             border: Border.all(color: Colors.grey[200]!, width: 2),
             borderRadius: BorderRadius.circular(12),
           ),
-          child: Image.asset(
-            'assets/images/image.png',
+          child: SizedBox(
             width: 200,
-            fit: BoxFit.contain,
+            height: 200,
+            child: QrImageView(
+              data: widget.qrString,
+              version: QrVersions.auto,
+              size: 200.0,
+            ),
           ),
         ),
         
@@ -182,7 +235,7 @@ class _KHQRDialogState extends State<KHQRDialog> {
           height: 50,
           child: ElevatedButton(
             onPressed: () {
-              Navigator.pop(context);
+              Navigator.pop(context, true); // Return success result
             },
             style: ElevatedButton.styleFrom(
               backgroundColor: const Color(0xFF5a7335),
