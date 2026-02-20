@@ -47,11 +47,7 @@ namespace mobile_api.Repositories
             return true;
         }
 
-<<<<<<< HEAD
-        public async Task<Notification> CreateNotificationAsync(CreateNotificationDto notificationDto)
-=======
         public async Task<Notification> CreateNotification(CreateNotificationDto notificationDto)
->>>>>>> san
         {
             string photoPath = string.Empty;
 
@@ -78,10 +74,7 @@ namespace mobile_api.Repositories
             {
                 Name = notificationDto.Name,
                 Desc = notificationDto.Desc,
-<<<<<<< HEAD
-=======
                 Photo = photoPath,
->>>>>>> san
                 CreatedAt = DateTime.UtcNow
             };
 
