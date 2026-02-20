@@ -1,11 +1,12 @@
 using Microsoft.AspNetCore.Mvc;
 using mobile_api.Interfaces;
 using mobile_api.DTOs.Notification;
+using mobile_api.Models;
 
 namespace mobile_api.Controllers
 {
-    [Route("api/[controller]")]
     [ApiController]
+    [Route("[controller]")]
     public class NotificationController : ControllerBase
     {
         private readonly INotificationRepository _notificationRepo;
@@ -16,26 +17,34 @@ namespace mobile_api.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> GetNotifications()
+        public async Task<IActionResult> GetAllNotification()
         {
-            var notifications = await _notificationRepo.GetNotificationsAsync();
-
-            var notificationDtos = notifications.Select(n => new NotificationDto
+            try
             {
-                Id = n.Id,
-                Name = n.Name,
-                Desc = n.Desc,
-                CreatedAt = n.CreatedAt
-            });
+                var notifications = await _notificationRepo.GetAllNotification();
+                var baseUrl = $"{Request.Scheme}://{Request.Host.Value}/";
 
-            return Ok(new { result = true, data = notificationDtos });
-        }
+                var notificationDtos = notifications.Select(n => new NotificationDto
+                {
+                    Id = n.Id,
+                    Name = n.Name,
+                    Desc = n.Desc,
+                    Photo = string.IsNullOrEmpty(n.Photo) ? "" : (n.Photo.StartsWith("http") ? n.Photo : $"{baseUrl}{n.Photo}"),
+                    CreatedAt = n.CreatedAt
+                });
 
-        [HttpDelete("clear")]
-        public async Task<IActionResult> ClearNotifications()
-        {
-            await _notificationRepo.ClearNotificationsAsync();
-            return Ok(new { result = true, message = "All notifications cleared" });
+                return Ok(new
+                {
+                    result = true,
+                    message = "Get all notification success",
+                    data = notificationDtos
+                });
+
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { message = "An error occurred while retrieving the notifications", error = ex.Message });
+            }
         }
 
         [HttpPost]
@@ -44,20 +53,77 @@ namespace mobile_api.Controllers
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
 
+<<<<<<< HEAD
             var notification = await _notificationRepo.CreateNotificationAsync(createDto);
 
             return Ok(new
+=======
+            try
+>>>>>>> san
             {
-                result = true,
-                message = "Notification created successfully",
-                data = new NotificationDto
+                var notification = await _notificationRepo.CreateNotification(createDto);
+
+                if (!string.IsNullOrEmpty(notification.Photo) && !notification.Photo.StartsWith("http"))
                 {
-                    Id = notification.Id,
-                    Name = notification.Name,
-                    Desc = notification.Desc,
-                    CreatedAt = notification.CreatedAt
+                    var baseUrl = $"{Request.Scheme}://{Request.Host.Value}/";
+                    notification.Photo = $"{baseUrl}{notification.Photo}";
                 }
-            });
+
+                return Ok(new
+                {
+                    result = true,
+                    message = "Create notification success",
+                    data = notification
+                });
+            }
+
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { message = "An error occurred while creating the notification", error = ex.Message });
+            }
+        }
+
+        [HttpDelete("clear")]
+        public async Task<IActionResult> ClearNotifications()
+        {
+            try
+            {
+                await _notificationRepo.ClearNotifications();
+                return Ok(new
+                {
+                    result = true,
+                    message = "Clear all notification success"
+                });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { message = "An error occurred while clearing the notifications", error = ex.Message });
+            }
+        }
+
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> DeleteNotification(int id)
+        {
+            try
+            {
+                var deleted = await _notificationRepo.DeleteNotification(id);
+                if (!deleted) return NotFound(new
+                {
+                    result = false,
+                    message = "Notification not found"
+                });
+
+                return Ok(new
+                {
+                    result = true,
+                    message = "Delete notification success"
+                });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { message = "An error occurred while deleting the notification", error = ex.Message });
+            }
         }
     }
 }
+

@@ -6,6 +6,7 @@ namespace mobile_api.DTOs.Notification
         public string Name { get; set; } = string.Empty;
         public string Photo {get; set;} = string.Empty;
         public string Desc { get; set; } = string.Empty;
+        public string Photo { get; set; } = string.Empty;
         public DateTime CreatedAt { get; set; }
     }
 }

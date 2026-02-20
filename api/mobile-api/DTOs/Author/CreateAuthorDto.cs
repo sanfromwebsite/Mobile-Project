@@ -13,6 +13,9 @@ namespace mobile_api.DTOs.Author
         [MaxLength(100)]
         public string Name { get; set; } = string.Empty;
         public IFormFile? Photo { get; set; }
+<<<<<<< HEAD
 
+=======
+>>>>>>> san
     }
 }

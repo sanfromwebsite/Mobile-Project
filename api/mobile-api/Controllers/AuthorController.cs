@@ -24,6 +24,14 @@ namespace mobile_api.Controllers
             try
             {
                 var authors = await _authorRepository.GetAllAuthor();
+                var baseUrl = $"{Request.Scheme}://{Request.Host.Value}/";
+                foreach (var author in authors)
+                {
+                    if (!string.IsNullOrEmpty(author.Photo) && !author.Photo.StartsWith("http"))
+                    {
+                        author.Photo = $"{baseUrl}{author.Photo}";
+                    }
+                }
 
                 var baseUrl = $"{Request.Scheme}://{Request.Host.Value}/";
                 foreach (var author in authors)
@@ -40,6 +48,7 @@ namespace mobile_api.Controllers
                     message = "Get all author success",
                     data = authors
                 });
+
             }
             catch (Exception ex)
             {
@@ -68,6 +77,7 @@ namespace mobile_api.Controllers
                     message = "Create author success",
                     data = createdAuthor
                 });
+
             }
             catch (Exception ex)
             {
@@ -123,6 +133,7 @@ namespace mobile_api.Controllers
                     message = "Update author success",
                     data = updatedAuthor
                 });
+
             }
             catch (Exception ex)
             {

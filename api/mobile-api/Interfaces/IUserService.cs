@@ -1,8 +1,5 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using mobile_api.Models;
+using mobile_api.DTOs.User;
 
 namespace mobile_api.Interfaces
 {
@@ -10,8 +7,9 @@ namespace mobile_api.Interfaces
     {
         Task<List<User>> GetAllUsersAsync();
         Task<User?> GetUserByIdAsync(int id);
-        Task<User> CreateUserAsync(User user);
-        Task<User?> UpdateUserAsync(int id, User user);
+        Task<User> CreateUserAsync(CreateUserDto createUserDto);
+        Task<User?> UpdateUserAsync(int id, UpdateUserDto updateUserDto);
         Task<bool> DeleteUserAsync(int id);
     }
 }
+

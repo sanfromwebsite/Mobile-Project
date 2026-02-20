@@ -62,7 +62,6 @@ namespace mobile_api.Repositories
 
         public async Task<bool> DeleteAuthor(int id)
         {
-
             var author = await _context.Authors.FindAsync(id);
             if (author == null) return false;
 
@@ -118,6 +117,7 @@ namespace mobile_api.Repositories
             await _context.SaveChangesAsync();
             return author;
         }
+
 
         public async Task<User> Register(RegisterDto registerDto)
         {
