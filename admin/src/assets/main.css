@@ -1,35 +1,112 @@
-@import './base.css';
+@import url("https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap");
+@import "./base.css";
 @import "tailwindcss";
+
+@theme {
+    --font-sans: "Poppins", sans-serif;
+}
+
+:root {
+    --font-sans: "Poppins", sans-serif;
+    --color-primary: #16a34a;
+    --color-primary-light: #f0fdf4;
+    --color-primary-dark: #15803d;
+    --color-secondary: #6366f1;
+    --color-secondary-light: #818cf8;
+    --color-secondary-dark: #4f46e5;
+    --color-text-primary: #1f2937;
+    --color-text-secondary: #6b7280;
+}
+
+/* 
+  Removed the default Vue grid layout that was interfering with the full-page sidebar.
+  The layout is now handled by components/layout/AppLayout.vue using Tailwind flexbox.
+*/
+
 #app {
-  max-width: 1280px;
-  margin: 0 auto;
-  padding: 2rem;
-  font-weight: normal;
+    width: 100%;
+    margin: 0;
+    padding: 0;
+    font-weight: normal;
+    font-family: var(--font-sans);
+    font-weight: 400;
 }
 
-a,
-.green {
-  text-decoration: none;
-  color: hsla(160, 100%, 37%, 1);
-  transition: 0.4s;
-  padding: 3px;
+body {
+    font-family: var(--font-sans);
+    font-weight: 400;
+    line-height: 1.5;
 }
 
-@media (hover: hover) {
-  a:hover {
-    background-color: hsla(160, 100%, 37%, 0.2);
-  }
+h1, h2, h3, h4, h5, h6 {
+    font-weight: 600;
 }
 
-@media (min-width: 1024px) {
-  body {
-    display: flex;
-    place-items: center;
-  }
+button, .btn {
+    font-weight: 500;
+}
 
-  #app {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    padding: 0 2rem;
-  }
+label, .label {
+    font-weight: 500;
+}
+
+a {
+    text-decoration: none;
+    transition: 0.4s;
+}
+/* Primary and Secondary Color Utilities */
+.text-primary {
+    color: var(--color-primary);
+}
+
+.text-primary-light {
+    color: var(--color-primary-light);
+}
+
+.text-primary-dark {
+    color: var(--color-primary-dark);
+}
+
+.text-secondary {
+    color: var(--color-secondary);
+}
+
+.text-secondary-light {
+    color: var(--color-secondary-light);
+}
+
+.text-secondary-dark {
+    color: var(--color-secondary-dark);
+}
+
+.text-text-primary {
+    color: var(--color-text-primary);
+}
+
+.text-text-secondary {
+    color: var(--color-text-secondary);
+}
+
+.bg-primary {
+    background-color: var(--color-primary);
+}
+
+.bg-primary-light {
+    background-color: var(--color-primary-light);
+}
+
+.bg-primary-dark {
+    background-color: var(--color-primary-dark);
+}
+
+.bg-secondary {
+    background-color: var(--color-secondary);
+}
+
+.bg-secondary-light {
+    background-color: var(--color-secondary-light);
+}
+
+.bg-secondary-dark {
+    background-color: var(--color-secondary-dark);
 }

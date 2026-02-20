@@ -6,4 +6,9 @@ import tailwindcss from "@tailwindcss/vite";
 
 export default defineConfig({
     plugins: [vue(), tailwindcss()],
+    resolve: {
+        alias: {
+            "@": fileURLToPath(new URL("./src", import.meta.url)),
+        },
+    },
 });
