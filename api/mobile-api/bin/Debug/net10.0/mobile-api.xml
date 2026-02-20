@@ -134,7 +134,6 @@
         <member name="M:mobile_api.Migrations.AddGlobalNotifications.BuildTargetModel(Microsoft.EntityFrameworkCore.ModelBuilder)">
             <inheritdoc />
         </member>
-<<<<<<< HEAD
         <member name="T:mobile_api.Migrations.PhotoAuthor">
             <inheritdoc />
         </member>
@@ -145,7 +144,8 @@
             <inheritdoc />
         </member>
         <member name="M:mobile_api.Migrations.PhotoAuthor.BuildTargetModel(Microsoft.EntityFrameworkCore.ModelBuilder)">
-=======
+            <inheritdoc />
+        </member>
         <member name="T:mobile_api.Migrations.AddNitiPho">
             <inheritdoc />
         </member>
@@ -156,7 +156,6 @@
             <inheritdoc />
         </member>
         <member name="M:mobile_api.Migrations.AddNitiPho.BuildTargetModel(Microsoft.EntityFrameworkCore.ModelBuilder)">
->>>>>>> san
             <inheritdoc />
         </member>
         <member name="T:Program">

@@ -33,14 +33,6 @@ namespace mobile_api.Controllers
                     }
                 }
 
-                var baseUrl = $"{Request.Scheme}://{Request.Host.Value}/";
-                foreach (var author in authors)
-                {
-                    if (!string.IsNullOrEmpty(author.Photo) && !author.Photo.StartsWith("http"))
-                    {
-                        author.Photo = $"{baseUrl}{author.Photo}";
-                    }
-                }
 
                 return Ok(new
                 {

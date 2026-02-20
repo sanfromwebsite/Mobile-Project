@@ -7,7 +7,6 @@ namespace mobile_api.DTOs.Notification
         public string Name { get; set; } = string.Empty;
         public IFormFile? Photo { get; set; }
         public string Desc { get; set; } = string.Empty;
-        public IFormFile? Photo { get; set; }
     }
 }
 
