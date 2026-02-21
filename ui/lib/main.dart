@@ -1,6 +1,12 @@
 import 'package:flutter/material.dart';
 import 'core/constants/app_colors.dart';
 import 'features/auth/presentation/pages/login_page.dart';
+import 'features/auth/presentation/pages/register_page.dart';
+import 'features/author/presentation/pages/profile_page.dart';
+import 'features/author/presentation/pages/author_list_page.dart';
+import 'features/contact/presentation/pages/contact_page.dart';
+import 'features/home/presentation/pages/home_page.dart';
+import 'features/home/presentation/pages/welcome_page.dart';
 
 void main() {
   runApp(const MyApp());
@@ -23,7 +29,14 @@ class MyApp extends StatelessWidget {
         ),
         useMaterial3: true,
       ),
-      home: const LoginPage(),
+      // home: const LoginPage(),
+      //home: const RegisterPage(),
+      //home: const AuthorProfilePage(),
+      //home:  AuthorListPage(),
+      //home: const ContactPage(),
+      home: const WelcomePage(),
+
+      
     );
   }
 }

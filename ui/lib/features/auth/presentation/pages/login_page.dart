@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:ui/features/auth/presentation/pages/register_page.dart';
 import '../../../../core/constants/app_colors.dart';
 import '../../../home/presentation/pages/home_page.dart';
 
@@ -302,7 +303,14 @@ class _LoginPageState extends State<LoginPage> {
                             style: TextStyle(color: Colors.grey[600]),
                           ),
                           GestureDetector(
-                            onTap: () {},
+                            onTap: () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => const RegisterPage(),
+                                  ),
+                                );
+                              },
                             child: const Text(
                               'Sign up',
                               style: TextStyle(
