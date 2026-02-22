@@ -47,6 +47,46 @@ const router = createRouter({
                     name: "roles-edit",
                     component: () => import("../view/Role/edit/[id].vue"),
                 },
+                {
+                    path: "delivery",
+                    name: "delivery",
+                    component: () => import("../view/Delivery/index.vue"),
+                },
+                {
+                    path: "books",
+                    name: "books",
+                    component: () => import("../view/Books/index.vue"),
+                },
+                {
+                    path: "banner",
+                    name: "banner",
+                    component: () => import("../view/Banner/index.vue"),
+                },
+                {
+                    path: "promotion",
+                    name: "promotion",
+                    component: () => import("../view/Promotion/index.vue"),
+                },
+                {
+                    path:"orders",
+                    name:"orders",
+                    component: () => import("../view/Orders/index.vue"),
+                },
+                {
+                    path:"category",
+                    name:"category",
+                    component: () => import("../view/Category/index.vue"),
+                },
+                {
+                    path:"customer",
+                    name:"customer",
+                    component: () => import("../view/Customer/index.vue"),
+                },
+                {
+                    path:"invoices",
+                    name:"invoices",
+                    component: () => import("../view/Invoice/index.vue"),
+                },
             ],
         },
     ],

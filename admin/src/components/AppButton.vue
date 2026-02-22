@@ -1,22 +1,30 @@
-<script setup lang="ts">
-interface Props {
-  type?: 'button' | 'submit' | 'reset'
-  variant?: 'primary' | 'secondary'
-  disabled?: boolean
-  loading?: boolean
-  icon?: any
-}
-
-const props = withDefaults(defineProps<Props>(), {
-  type: 'button',
-  variant: 'primary',
-  disabled: false,
-  loading: false,
+<script setup>
+const props = defineProps({
+  type: {
+    type: String,
+    default: 'button'
+  },
+  variant: {
+    type: String,
+    default: 'primary'
+  },
+  disabled: {
+    type: Boolean,
+    default: false
+  },
+  loading: {
+    type: Boolean,
+    default: false
+  },
+  icon: {
+    type: [Object, Function, String],
+    default: null
+  }
 })
 
 const emit = defineEmits(['click'])
 
-const handleClick = (event: MouseEvent) => {
+const handleClick = (event) => {
   if (props.disabled || props.loading) return
   emit('click', event)
 }

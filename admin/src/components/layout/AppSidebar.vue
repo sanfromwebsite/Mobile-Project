@@ -28,16 +28,16 @@ const navGroups = [
         group: "Product Management",
         items: [
             { label: "Books", path: "/books", icon: "ph:book-open" },
-            { label: "Categories", path: "/categories", icon: "ph:tag" },
-            { label: "Promotion / Flash Sale", path: "/promotions", icon: "ph:lightning" },
+            { label: "Categories", path: "/category", icon: "ph:tag" },
+            { label: "Promotion / Flash Sale", path: "/promotion", icon: "ph:lightning" },
         ],
     },
     {
         group: "Order Management",
         items: [
             { label: "Orders", path: "/orders", icon: "ph:shopping-bag" },
-            { label: "Customers", path: "/customers", icon: "ph:users" },
-            { label: "Banners", path: "/banners", icon: "ph:image" },
+            { label: "Customers", path: "/customer", icon: "ph:users" },
+            { label: "Banners", path: "/banner", icon: "ph:image" },
         ],
     },
     {
